@@ -5,14 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using WarOfLords.Core;
-using WarOfLords.Core.Models;
+using WarOfLords.Common;
+using WarOfLords.Common.Models;
 
 namespace TestConsole
 {
     class Program
     {
         static bool stop = false;
+        static BattleManager BattleManager;
        static void Main(string[] args)
         {
             string country1 = "C1";
@@ -23,15 +24,15 @@ namespace TestConsole
 
             ArmyMaker armyMaker = new ArmyMaker();
             MapMaker mapMaker = new MapMaker();
-
+            BattleManager = new BattleManager();
             BattleManager.CountryFederationMapDic.AddOrUpdate(country1,federation1, (key,oldvalue)=> federation1);
             BattleManager.CountryFederationMapDic.AddOrUpdate(country2, federation2, (key, oldvalue) => federation2);
 
             BattleManager.CountryBattleTeamsMapDic.AddOrUpdate(country1, new  List<BattleTeam>(), (key, oldValue) => oldValue);
             BattleManager.CountryBattleTeamsMapDic.AddOrUpdate(country2, new List<BattleTeam>(), (key, oldValue) => oldValue);
 
-            var battleTeam1 = ArmyMaker.MakeBattleTeam(country1, federation1, "C1.T1", 500, 500, 2, 2, 2);
-            var battleTeam2 = ArmyMaker.MakeBattleTeam(country2, federation2, "C2.T2", 500, 500, 2, 2, 2);
+            var battleTeam1 = ArmyMaker.MakeBattleTeam(BattleManager, country1, federation1, "C1.T1", 100, 100, 2, 2, 2);
+            var battleTeam2 = ArmyMaker.MakeBattleTeam(BattleManager, country2, federation2, "C2.T2", 100, 100, 2, 2, 2);
             battleTeam1.Setting.MaxLockPerEnemy = 5;
             battleTeam2.Setting.MaxLockPerEnemy = 2;
 
@@ -42,7 +43,7 @@ namespace TestConsole
 
             MapVertex originPoint = new MapVertex
             {
-                X = 150,
+                X = 0,
                 Y = 0,
                 Z = 0
             };

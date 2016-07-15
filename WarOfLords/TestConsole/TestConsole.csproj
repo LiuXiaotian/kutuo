@@ -43,18 +43,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LoggerFactory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TraceLogger.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WarOfLords.Core\WarOfLords.Core.csproj">
-      <Project>{843d2f4f-6f6d-4901-9460-796537b426fe}</Project>
-      <Name>WarOfLords.Core</Name>
-    </ProjectReference>
+    <Content Include="ToDoList.txt" />
   </ItemGroup>
+  <Import Project="..\WarOfLords.Common\WarOfLords.Common.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

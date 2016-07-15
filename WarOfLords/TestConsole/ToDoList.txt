@@ -1,0 +1,8 @@
+﻿1. Battle Team Deployment
+2. Moving/Damaing compmutation, Done
+3. Create subteam
+4. Target prioratization
+5. Target unit auto-teaming
+6. Medical unit curing
+7. Max lock per enemy, Done
+
