@@ -9,36 +9,139 @@ namespace WarOfLords.Client
     public class GameStartLayer : CCLayerColor
     {
         CCLabel startLabel;
-        public GameStartLayer () : base ()
+        CCTextField tractingTextField;
+        public GameStartLayer () : base(CCColor4B.Blue)
         {
-            var touchListener = new CCEventListenerTouchAllAtOnce ();
-            touchListener.OnTouchesEnded += (touches, ccevent) =>
-            {
-                CCScene scene = new CCScene(GameView);
-                scene.AddLayer(new GameLayer());
-                GameView.RunWithScene(scene);
-            };
-            AddEventListener (touchListener, this);
-
-            Color = CCColor3B.Black;
-            Opacity = 255;
+            
         }
 
         protected override void AddedToScene ()
         {
             base.AddedToScene ();
 
-            startLabel = new CCLabel("Tap Screen to Fight!", "arial", 22) {
-                Position = VisibleBoundsWorldspace.Center,
+            CCTextField txTeam1SwordNumber = new CCTextField("Team 1 Sword", "arial", 30, CCLabelFormat.SystemFont);
+            txTeam1SwordNumber.AnchorPoint = CCPoint.Zero;
+            txTeam1SwordNumber.Position = new CCPoint(100, 100);
+            txTeam1SwordNumber.AutoEdit = true;
+
+            CCTextField txTeam1BowNumber = new CCTextField("Team 1 Bow", "arial", 30, CCLabelFormat.SystemFont);
+            txTeam1BowNumber.AnchorPoint = CCPoint.Zero;
+            txTeam1BowNumber.Position = new CCPoint(100, 150);
+            txTeam1BowNumber.AutoEdit = true;
+
+            CCTextField txTeam2SwordNumber = new CCTextField("Team 2 Sword", "arial", 30, CCLabelFormat.SystemFont);
+            txTeam2SwordNumber.AnchorPoint = CCPoint.Zero;
+            txTeam2SwordNumber.Position = new CCPoint(100, 200);
+            txTeam2SwordNumber.AutoEdit = true;
+
+            CCTextField txTeam2BowNumber = new CCTextField("Team 2 Bow", "arial", 30, CCLabelFormat.SystemFont);
+            txTeam2BowNumber.AnchorPoint = CCPoint.Zero;
+            txTeam2BowNumber.Position = new CCPoint(100, 250);
+            txTeam2SwordNumber.AutoEdit = true;
+
+            AddChild(txTeam1BowNumber);
+            AddChild(txTeam1SwordNumber);
+            AddChild(txTeam2BowNumber);
+            AddChild(txTeam2SwordNumber);
+            txTeam1SwordNumber.Text = "50";
+            txTeam1BowNumber.Text = "50";
+            txTeam2SwordNumber.Text = "50";
+            txTeam2BowNumber.Text = "50";
+
+            startLabel = new CCLabel("Start to Fight", "arial", 50)
+            {
                 Color = CCColor3B.Green,
-                HorizontalAlignment = CCTextAlignment.Center,
-                VerticalAlignment = CCVerticalTextAlignment.Center,
-                AnchorPoint = CCPoint.AnchorMiddle
+               //AnchorPoint = CCPoint.Zero,
+               // Position = new CCPoint(0, 0), 
             };
 
-            
+            var exitLabel = new CCLabel("Exit", "arial", 50)
+            {
+                Color = CCColor3B.Green,
+                //AnchorPoint = CCPoint.Zero,
+                //Position = new CCPoint(0, 100)
+            };
 
-            AddChild (startLabel);
+            CCMenuItemLabel fightMenuItem = new CCMenuItemLabel(startLabel, (obj) =>
+            { 
+                BattleInfo info = new BattleInfo
+                {
+                    Team1SwordNumber = int.Parse(txTeam1SwordNumber.Text),
+                    Team1BowNumber = int.Parse(txTeam1BowNumber.Text),
+                    Team2SwordNumber = int.Parse(txTeam2SwordNumber.Text),
+                    Team2BowNumber = int.Parse(txTeam2BowNumber.Text)
+                };
+                CCScene scene = new CCScene(this.Window);
+                scene.AddChild(new GameLayer(info));
+                this.Window.RunWithScene(scene);
+            });
+            fightMenuItem.AnchorPoint = CCPoint.Zero;
+
+            CCMenuItemLabel exitMenuItem = new CCMenuItemLabel(exitLabel, (obj) =>
+            {
+                BattleInfo info = new BattleInfo
+                {
+                    Team1SwordNumber = int.Parse(txTeam1SwordNumber.Text),
+                    Team1BowNumber = int.Parse(txTeam1BowNumber.Text),
+                    Team2SwordNumber = int.Parse(txTeam2SwordNumber.Text),
+                    Team2BowNumber = int.Parse(txTeam2BowNumber.Text)
+                };
+                CCScene scene = new CCScene(Window);
+                scene.AddChild(new GameLayer(info));
+                Window.RunWithScene(scene);
+            });
+            exitMenuItem.AnchorPoint = CCPoint.Zero;
+
+            CCMenu menu = new CCMenu();
+            menu.AnchorPoint = new CCPoint(0.5f, 0.5f);
+            menu.Position = new CCPoint(300, 500);
+            menu.AddChild(fightMenuItem);
+            menu.AddChild(exitMenuItem);
+            menu.AlignItemsVertically();
+
+            AddChild (menu);
+
+            var touchListener = new CCEventListenerTouchOneByOne();
+            touchListener.IsSwallowTouches = true;
+
+            touchListener.OnTouchBegan += (touch, ccevent) =>
+            {
+                //tractingTextField = txTeam1BowNumber;
+                //txTeam1BowNumber.Edit();
+                return true;
+            };
+            touchListener.OnTouchEnded += (touch, ccevent) =>
+            {
+                
+                if (txTeam1BowNumber.BoundingBoxTransformedToWorld.ContainsPoint(touch.Location))
+                {
+                    tractingTextField = txTeam1BowNumber;
+                    txTeam1BowNumber.Edit();
+                }
+                if (txTeam1SwordNumber.BoundingBoxTransformedToWorld.ContainsPoint(touch.Location))
+                {
+                    tractingTextField = txTeam1SwordNumber;
+                    txTeam1SwordNumber.Edit();
+                }
+                if (txTeam2BowNumber.BoundingBoxTransformedToWorld.ContainsPoint(touch.Location))
+                {
+                    tractingTextField = txTeam2BowNumber;
+                    txTeam2BowNumber.Edit();
+                }
+                if (txTeam2SwordNumber.BoundingBoxTransformedToWorld.ContainsPoint(touch.Location))
+                {
+                    tractingTextField = txTeam2SwordNumber;
+                    txTeam2SwordNumber.Edit();
+                }
+                //if(tractingTextField != null)
+                //{
+                //    //tractingTextField.EndEdit();
+                //    tractingTextField = null;
+                //}
+            };
+            
+            AddEventListener(touchListener, this);
+            Opacity = 255;
         }
 
         //public static CCScene GameStartLayerScene (CCWindow mainWindow)

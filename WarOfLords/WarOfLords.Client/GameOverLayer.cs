@@ -15,9 +15,9 @@ namespace WarOfLords.Client
             var touchListener = new CCEventListenerTouchAllAtOnce ();
             touchListener.OnTouchesEnded += (touches, ccevent) =>
             {
-                CCScene scene = new CCScene(GameView);
-                scene.AddLayer(new GameLayer());
-                GameView.RunWithScene(scene);
+                CCScene scene = new CCScene(this.Window);
+                scene.AddChild(new GameStartLayer());
+                Window.RunWithScene(scene);
             };
 
             AddEventListener (touchListener, this);

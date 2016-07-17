@@ -24,11 +24,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		WarOfLords.Common\WarOfLords.Common.projitems*{f747875e-8a1c-4146-8797-d450568be56b}*SharedItemsImports = 4
-		WarOfLords.Client\WarOfLords.Client.projitems*{574e190c-751e-4a68-bc73-8efe0464e5e0}*SharedItemsImports = 4
 		WarOfLords.Common\WarOfLords.Common.projitems*{574e190c-751e-4a68-bc73-8efe0464e5e0}*SharedItemsImports = 4
+		WarOfLords.Client\WarOfLords.Client.projitems*{574e190c-751e-4a68-bc73-8efe0464e5e0}*SharedItemsImports = 4
 		WarOfLords.Client\WarOfLords.Client.projitems*{3828267e-b183-46cf-907e-3823d8d3d847}*SharedItemsImports = 13
-		WarOfLords.Client\WarOfLords.Client.projitems*{f8c1d4f8-44ae-4c37-b437-741c245c1c8a}*SharedItemsImports = 4
 		WarOfLords.Common\WarOfLords.Common.projitems*{f8c1d4f8-44ae-4c37-b437-741c245c1c8a}*SharedItemsImports = 4
+		WarOfLords.Client\WarOfLords.Client.projitems*{f8c1d4f8-44ae-4c37-b437-741c245c1c8a}*SharedItemsImports = 4
 		WarOfLords.Common\WarOfLords.Common.projitems*{5ce16e67-863e-47e4-8e89-af8d5e2516df}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

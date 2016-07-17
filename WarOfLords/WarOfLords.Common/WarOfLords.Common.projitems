@@ -14,6 +14,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)CollectionExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DetectHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ILogger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MapHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MapMaker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\BattleRole.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\BattleSetting.cs" />

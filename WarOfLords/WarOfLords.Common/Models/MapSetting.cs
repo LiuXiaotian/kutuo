@@ -8,6 +8,6 @@ namespace WarOfLords.Common.Models
 {
     public class MapSetting
     {
-        public int UnitCapacityPerPoint = 1;
+        public int UnitCapacityPerPoint = 5;
     }
 }

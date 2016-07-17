@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using WarOfLords.Client;
 
 namespace WarOfLords.Common.Models
 {
@@ -140,54 +141,57 @@ namespace WarOfLords.Common.Models
             CancellationToken  cancelToken;
             this.PrepareMove(out cancelToken);
             int movedTotal = 0;
+            var routePoints = MapHelper.DefaultMap.GetRoutePoints(this.position, direction);
 
-            if (!cancelToken.IsCancellationRequested)
+            foreach (var routePos in routePoints)
             {
-                this.Team.MessageQueue.EnqueueMessage(this, "Moving to {0} for attack", direction);
-                int distance = direction.DistanceTo(this.Position);
-                if (distance == 0) return 0;
-                
-                int stepNeeded = distance / this.MoveStepLength;
-                if (stepNeeded == 0) stepNeeded = 1;
-                IEnumerable<BattleUnit> enemies = this.Team.DiscoverEnemies(this.Position, this.AttackRange);
-                MapVertex fromPos = this.position.Clone();
-                TimeSpan duration = TimeSpan.FromMilliseconds(0);
-                TimeSpan moveInterval = TheLordTime.FromMilliseconds(this.MoveInterval);
-                TimeSpan actionInterval = TimeSpan.FromMilliseconds(500);
-                while (stepNeeded > 0 && !cancelToken.IsCancellationRequested && enemies.Count() == 0)
+                if (!cancelToken.IsCancellationRequested)
                 {
-                    duration += moveInterval;
-                    await Task.Delay(moveInterval);
-                    //if (!cancelToken.IsCancellationRequested)
-                    //{
-                    this.Position.Moved(direction, this.MoveStepLength, this.Team.BattleFieldMap);
-                    if (duration > actionInterval)
+                    this.Team.MessageQueue.EnqueueMessage(this, "Moving to {0} for attack", routePos);
+                    int distance = routePos.DistanceTo(this.Position);
+                    if (distance == 0) return 0;
+
+                    int stepNeeded = distance / this.MoveStepLength;
+                    if (stepNeeded == 0) stepNeeded = 1;
+                    IEnumerable<BattleUnit> enemies = this.Team.DiscoverEnemies(this.Position, this.AttackRange);
+                    MapVertex fromPos = this.position.Clone();
+                    TimeSpan duration = TimeSpan.FromMilliseconds(0);
+                    TimeSpan moveInterval = TheLordTime.FromMilliseconds(this.MoveInterval);
+                    TimeSpan actionInterval = TimeSpan.FromMilliseconds(500);
+                    while (stepNeeded > 0 && !cancelToken.IsCancellationRequested && enemies.Count() == 0)
                     {
-                        this.OnPositionChanged?.Invoke(fromPos.Clone(), this.Position.Clone(), actionInterval);
-                        fromPos = this.position.Clone();
-                        duration -= actionInterval;
+                        duration += moveInterval;
+
+                        this.Position.Moved(routePos, this.MoveStepLength, this.Team.BattleFieldMap);
+                        this.OnPositionChanged?.Invoke(fromPos.Clone(), this.Position.Clone(), moveInterval);
+                        await Task.Delay(moveInterval);
+
+                        //if (duration > actionInterval)
+                        //{
+                        //    this.OnPositionChanged?.Invoke(fromPos.Clone(), this.Position.Clone(), actionInterval);
+                        fromPos = this.position;
+                        //    duration -= actionInterval;
+                        //}
+                        movedTotal += this.MoveStepLength;
+                        stepNeeded--;
+                        if (movedTotal % 10 == 0) this.Team.MessageQueue.EnqueueMessage(this, "Moved to {0}", this.Position);
+
+                        enemies = this.Team.DiscoverEnemies(this.Position, this.AttackRange);
                     }
-                    movedTotal += this.MoveStepLength;
-                    stepNeeded--;
-                    if (movedTotal % 10 == 0) this.Team.MessageQueue.EnqueueMessage(this, "Moved to {0}", this.Position);
-                    //}
-                    //else
-                    //{
-                    //    break;
-                    //}
-                    enemies = this.Team.DiscoverEnemies(this.Position, this.AttackRange);
-                }
-                this.OnPositionChanged?.Invoke(fromPos.Clone(), this.Position.Clone(), duration);
-                if (enemies.Count() > 0)
-                {
-                    return movedTotal;
-                }
-                if(!cancelToken.IsCancellationRequested && stepNeeded <= 0)
-                {
-                    this.Position.X = direction.X;
-                    this.Position.Y = direction.Y;
-                    this.Position.Z = direction.Z;
-                    this.Team.MessageQueue.EnqueueMessage(this, "Moved to {0}", this.Position);
+                    //this.OnPositionChanged?.Invoke(fromPos.Clone(), this.Position.Clone(), duration);
+                    if (enemies.Count() > 0)
+                    {
+                        return movedTotal;
+                    }
+                    if (!cancelToken.IsCancellationRequested && stepNeeded <= 0 && !this.position.Equals(routePos))
+                    {
+                        this.OnPositionChanged?.Invoke(this.position.Clone(), routePos.Clone(), moveInterval);
+                        this.Position.X = routePos.X;
+                        this.Position.Y = routePos.Y;
+                        this.Position.Z = routePos.Z;
+                        
+                        this.Team.MessageQueue.EnqueueMessage(this, "Moved to {0}", this.Position);
+                    }
                 }
             }
             return movedTotal;

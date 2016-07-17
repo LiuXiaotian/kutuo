@@ -9,6 +9,8 @@
     <Import_RootNamespace>WarOfLords.Client</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)AppDelegate.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BattleInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BattleResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BattleUnitSprite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ClientApplicationDelegate.cs" />

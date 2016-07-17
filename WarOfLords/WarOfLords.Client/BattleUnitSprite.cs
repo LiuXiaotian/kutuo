@@ -23,29 +23,41 @@ namespace WarOfLords.Client
             actionQ = new ConcurrentQueue<CCAction>();
             battleUnit = unit;
             teamId = id;
-            battleUnit.OnHealthChanged += this.OnBattleUnitHealthChanged;
+            //battleUnit.OnHealthChanged += this.OnBattleUnitHealthChanged;
             battleUnit.OnPositionChanged += this.OnBattleUnitPositionChanged;
             battleUnit.OnPositionInited += this.OnBattleUnitPositionInited;
             var texture = new CCTexture2D(getFileFromUnitType() + "-" + teamId);
             this.SpriteFrame = new CCSpriteFrame(texture, new CCRect(0, 0, texture.PixelsWide, texture.PixelsHigh));
             this.AnchorPoint = new CCPoint(0.5f, 0.5f);
             spriteCancelSource = new CancellationTokenSource();
-            this.runAsync(spriteCancelSource.Token);
+            //this.runAsync(spriteCancelSource.Token);
+            this.Schedule();
         }
 
-     void OnBattleUnitHealthChanged(int from, int to)
+        public override void Update(float dt)
+        {
+            base.Update(dt);
+            if (this.battleUnit.Health <= 0)
+            {
+                this.battleUnit.OnPositionInited -= OnBattleUnitPositionInited;
+                this.RemoveFromParent();
+            }
+            else
+            {
+                //CCMoveTo moveToAction = new CCMoveTo(dt, new CCPoint(battleUnit.Position.X, battleUnit.Position.Y));
+                CCAction action;
+                if ((this.actionQ.TryDequeue(out action)))
+                {
+                    this.AddAction(action);
+                }
+            }
+        }
+
+        void OnBattleUnitHealthChanged(int from, int to)
         {
             if (this.battleUnit.Health <= 0)
             {
                 this.spriteCancelSource.Cancel();
-
-                //var deadTexture = new CCTexture2D("Dead");
-                //this.ReplaceTexture(deadTexture, new CCRect(0, 0, deadTexture.PixelsWide, deadTexture.PixelsHigh));
-
-                //this.battleUnit.OnHealthChanged -= OnBattleUnitHealthChanged;
-                //this.battleUnit.OnPositionInited -= OnBattleUnitPositionInited;
-                //this.battleUnit.OnPositionInited -= OnBattleUnitPositionInited;
-                //this.RemoveFromParent();
             }
         }
 
@@ -96,7 +108,7 @@ namespace WarOfLords.Client
                     //this.ReplaceTexture(deadTexture, new CCRect(0, 0, deadTexture.PixelsWide, deadTexture.PixelsHigh));
 
                     this.battleUnit.OnHealthChanged -= OnBattleUnitHealthChanged;
-                    this.battleUnit.OnPositionInited -= OnBattleUnitPositionInited;
+                    this.battleUnit.OnPositionChanged -= OnBattleUnitPositionChanged;
                     this.battleUnit.OnPositionInited -= OnBattleUnitPositionInited;
                     this.RemoveFromParent();
                 }

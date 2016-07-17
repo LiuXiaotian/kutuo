@@ -138,6 +138,9 @@
   <ItemGroup>
     <AndroidAsset Include="Assets\Content\Images\Dead.png" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Content\Images\background.png" />
+  </ItemGroup>
   <Import Project="..\WarOfLords.Client\WarOfLords.Client.projitems" Label="Shared" />
   <Import Project="..\WarOfLords.Common\WarOfLords.Common.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

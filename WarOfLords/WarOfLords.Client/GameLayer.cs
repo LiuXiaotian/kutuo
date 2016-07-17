@@ -10,7 +10,7 @@ using System.Threading;
 
 namespace WarOfLords.Client
 {
-    public class GameLayer : CCLayerColor
+    public class GameLayer : CCLayerColor, ICCUpdatable
     {
 
         // Define a label variable
@@ -21,21 +21,21 @@ namespace WarOfLords.Client
         BattleTeam battleTeam2;
         BattleManager battleManager;
         CancellationTokenSource cancelSourceForMessageLoopUp = new CancellationTokenSource();
+        BattleInfo battleInfo;
 
-        public GameLayer() : base(CCColor4B.Blue)
+        public GameLayer(BattleInfo info) : base(CCColor4B.White)
         {
+            battleInfo = info;
             var touchListener = new CCEventListenerTouchAllAtOnce(); 
             touchListener.OnTouchesEnded += this.OnTouchesEnded;
             AddEventListener(touchListener, this);
-
-            this.Color = new CCColor3B(CCColor4B.White);
+            
             this.Opacity = 0xFF;
-
-           // //create and initialize a Label
-           //label = new CCLabel("Hello CocosSharp", "Fonts/MarkerFelt", 22, CCLabelFormat.SpriteFont);
-
-           // //add the label as a child to this Layer
-           // AddChild(label);
+            CCSprite backgroupSprite = new CCSprite("background");
+            backgroupSprite.ZOrder = 0;
+            backgroupSprite.AnchorPoint = new CCPoint(0, 0);
+            backgroupSprite.Position = new CCPoint(0, 0);
+            AddChild(backgroupSprite);
 
         }
 
@@ -67,8 +67,8 @@ namespace WarOfLords.Client
 
             team2Label = new CCLabel("Team2Label", "Arial", 18, CCLabelFormat.SystemFont);
             team2Label.Color = new CCColor3B(CCColor4B.Red);
-            team2Label.PositionX = 0;
-            team2Label.PositionY = this.GameView.DesignResolution.Height;
+            team2Label.Position = this.VisibleBoundsWorldspace.LeftTop();
+            //team2Label.PositionY = this.VisibleBoundsWorldspace.top;
             team2Label.AnchorPoint = new CCPoint(0, 1);
             AddChild(team2Label);
 
@@ -94,8 +94,9 @@ namespace WarOfLords.Client
                     Y = (int)touches[0].Location.Y,
                     Z = 0
                 };
-                var task1 = battleTeam1.Attack(attackPos);
-                var task2 = battleTeam2.Attack(attackPos);
+                var onTrackPos = MapHelper.DefaultMap.NeareastOnTrackPoint(attackPos);
+                var task1 = battleTeam1.Attack(onTrackPos);
+                var task2 = battleTeam2.Attack(onTrackPos);
                 await Task.WhenAll(task1, task2);
             }
         }
@@ -128,10 +129,10 @@ namespace WarOfLords.Client
             battleTeam1.OnAddBattleUnitSucceeded += this.OnAddBattleUnitToBattleTeamSucceeded;
             battleTeam2.OnAddBattleUnitSucceeded += this.OnAddBattleUnitToBattleTeamSucceeded;
 
-            ArmyMaker.MakeArmy(battleTeam1, 10, 10, 20, 2, 2);
-            ArmyMaker.MakeArmy(battleTeam2, 10, 10, 20, 2, 2);
+            ArmyMaker.MakeArmy(battleTeam1, battleInfo.Team1SwordNumber, battleInfo.Team1BowNumber, 2, 2, 1);
+            ArmyMaker.MakeArmy(battleTeam2, battleInfo.Team2SwordNumber, battleInfo.Team2BowNumber, 2, 2, 1);
             battleTeam1.Setting.MaxLockPerEnemy = 5;
-            battleTeam2.Setting.MaxLockPerEnemy = 2;
+            battleTeam2.Setting.MaxLockPerEnemy = 5;
 
             battleManager.CountryBattleTeamsMapDic[country1].Add(battleTeam1);
             battleManager.CountryBattleTeamsMapDic[country2].Add(battleTeam2);
@@ -143,14 +144,14 @@ namespace WarOfLords.Client
                     Y = 0,
                     Z = 0
                 }, 
-                this.GameView.DesignResolution.Width, 
-                this.GameView.DesignResolution.Height
+                (int)this.VisibleBoundsWorldspace.MaxX,
+                (int)this.VisibleBoundsWorldspace.MaxY
                 );
 
             battleTeam1.EnterMap(map);
             battleTeam1.Position = new MapVertex
             {
-                X = this.GameView.DesignResolution.Width / 2,
+                X = (int)this.VisibleBoundsWorldspace.MaxX / 2, //this.GameView.DesignResolution.Width / 2,
                 Y = 30,
                 Z = 0
             }; 
@@ -158,15 +159,15 @@ namespace WarOfLords.Client
             battleTeam2.EnterMap(map);
             battleTeam2.Position = new MapVertex
             {
-                X = this.GameView.DesignResolution.Width / 2,
-                Y = this.GameView.DesignResolution.Height - 50,
+                X = (int)this.VisibleBoundsWorldspace.MaxX / 2,// this.GameView.DesignResolution.Width / 2,
+                Y = (int)this.VisibleBoundsWorldspace.MaxX - 50,//this.GameView.DesignResolution.Height - 50,
                 Z = 0
             };
 
             var center = new MapVertex
             {
-                X = this.GameView.DesignResolution.Width / 2,
-                Y = this.GameView.DesignResolution.Height / 2,
+                X = (int)this.VisibleBoundsWorldspace.MaxX / 2,
+                Y = (int)this.VisibleBoundsWorldspace.MaxX / 2,
                 Z = 0
             };
 
@@ -178,43 +179,49 @@ namespace WarOfLords.Client
 
             var detectTask = battleTeam1.Detect(cancelSourceForMessageLoopUp.Token);
             var detectTask2 = battleTeam2.Detect(cancelSourceForMessageLoopUp.Token);
-            var updateLoop = labelUpdateLoop();
+
+            this.Schedule();
+            //CCScheduler scheduler = new CCScheduler(); 
+            //var updateLoop = labelUpdateLoop();
 
             //battleTeam1.CreateSubTeam<BowMan>(1);
             //battleTeam1.CreateSubTeam(2, 500, 0, 0, 0, 0);
             //battleTeam1.CreateSubTeam(3, 0, 0, 2, 2, 2);
         }
 
-        async Task labelUpdateLoop()
+        public override void Update(float dt)
         {
+            base.Update(dt);
             string team1 = battleTeam1.Name;
             string team2 = battleTeam2.Name;
             int team1Alive = battleTeam1.AllAliveUnits.Count();
             int team2Alive = battleTeam2.AllAliveUnits.Count();
 
-            while (team1Alive > 0 && team2Alive > 0)
+            if (team1Alive > 0 && team2Alive > 0)
             {
                 this.team1Label.Text = string.Format("{0}:{1}, {2}", team1, team1Alive, battleTeam1.TotalHealth);
                 this.team2Label.Text = string.Format("{0}:{1},  {2}", team2, team2Alive, battleTeam2.TotalHealth);
-                await Task.Delay(500);
-                team1Alive = battleTeam1.AllAliveUnits.Count();
-                team2Alive = battleTeam2.AllAliveUnits.Count();
+                //await Task.Delay(500);
+                //team1Alive = battleTeam1.AllAliveUnits.Count();
+                //team2Alive = battleTeam2.AllAliveUnits.Count();
             }
-            this.team1Label.Text = string.Format("{0}:{1},  {2}:{3}", team1, team1Alive, team2, team2Alive);
-
-            //await Task.Delay(1000);
-            BattleResult result = new BattleResult
+            else
             {
-                team1 = team1,
-                team1Alive = team1Alive,
-                team2 = team2,
-                team2Alive = team2Alive
-            };
+                //this.team1Label.Text = string.Format("{0}:{1},  {2}:{3}", team1, team1Alive, team2, team2Alive);
+                
+                BattleResult result = new BattleResult
+                {
+                    team1 = team1,
+                    team1Alive = team1Alive,
+                    team2 = team2,
+                    team2Alive = team2Alive
+                };
 
-            GameOverLayer overLayer = new GameOverLayer(result);
-            CCScene scene = new CCScene(GameView);
-            scene.AddLayer(overLayer);
-            GameView.RunWithScene(scene);
+                GameOverLayer overLayer = new GameOverLayer(result);
+                CCScene scene = new CCScene(Window);
+                scene.AddChild(overLayer);
+                Window.RunWithScene(scene);
+            }
         }
 
         void OnAddBattleUnitToBattleTeamSucceeded(BattleUnit unit)
