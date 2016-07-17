@@ -160,14 +160,14 @@ namespace WarOfLords.Client
             battleTeam2.Position = new MapVertex
             {
                 X = (int)this.VisibleBoundsWorldspace.MaxX / 2,// this.GameView.DesignResolution.Width / 2,
-                Y = (int)this.VisibleBoundsWorldspace.MaxX - 50,//this.GameView.DesignResolution.Height - 50,
+                Y = (int)this.VisibleBoundsWorldspace.MaxY - 50,//this.GameView.DesignResolution.Height - 50,
                 Z = 0
             };
 
             var center = new MapVertex
             {
                 X = (int)this.VisibleBoundsWorldspace.MaxX / 2,
-                Y = (int)this.VisibleBoundsWorldspace.MaxX / 2,
+                Y = (int)this.VisibleBoundsWorldspace.MaxY / 2,
                 Z = 0
             };
 
