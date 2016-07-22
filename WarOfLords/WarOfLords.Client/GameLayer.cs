@@ -22,6 +22,7 @@ namespace WarOfLords.Client
         BattleManager battleManager;
         CancellationTokenSource cancelSourceForMessageLoopUp = new CancellationTokenSource();
         BattleInfo battleInfo;
+        CCTileMap tileMap;
 
         public GameLayer(BattleInfo info) : base(CCColor4B.White)
         {
@@ -30,21 +31,24 @@ namespace WarOfLords.Client
             touchListener.OnTouchesEnded += this.OnTouchesEnded;
             AddEventListener(touchListener, this);
             
-            this.Opacity = 0xFF;
-            CCSprite backgroupSprite = new CCSprite("background");
-            backgroupSprite.ZOrder = 0;
-            backgroupSprite.AnchorPoint = new CCPoint(0, 0);
-            backgroupSprite.Position = new CCPoint(0, 0);
-            AddChild(backgroupSprite);
-
+            this.Opacity = 0;
+            //CCSprite backgroupSprite = new CCSprite("background");
+            //backgroupSprite.ZOrder = 0;
+            //backgroupSprite.AnchorPoint = new CCPoint(0, 0);
+            //backgroupSprite.Position = new CCPoint(0, 0);
+            //AddChild(backgroupSprite);
         }
 
         protected override void AddedToScene()
         {
             base.AddedToScene();
 
-            
-            
+           
+
+            //CCTileMapLayer tileLayer = tileMap.LayerNamed("Tile Layer 1");
+            //CCTileMapCoordinates coor = new CCTileMapCoordinates(1, 1);
+            //CCSprite tileSprite = tileLayer.ExtractTile(coor);
+
             // Use the bounds to layout the positioning of our drawable assets
             var bounds = VisibleBoundsWorldspace;
 
@@ -59,7 +63,7 @@ namespace WarOfLords.Client
             CCSize size = VisibleBoundsWorldspace.Size;
 
             team1Label = new CCLabel("Team1Label", "Arial", 18, CCLabelFormat.SystemFont);
-            team1Label.Color = new CCColor3B(CCColor4B.Blue);
+            team1Label.Color = new CCColor3B(CCColor4B.Red);
             team1Label.PositionX = 0;
             team1Label.PositionY = 0;
             team1Label.AnchorPoint = new CCPoint(0, 0);

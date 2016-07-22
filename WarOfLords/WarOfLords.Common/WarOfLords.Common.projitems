@@ -16,6 +16,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ILogger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MapHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MapMaker.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MapTileIndex.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\BattleRole.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\BattleSetting.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\BattleTeam.cs" />
@@ -41,6 +42,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\Weapon.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\WeaponOperator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TheLordTime.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TileMap.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TileNavigationResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util.cs" />
   </ItemGroup>
 </Project>

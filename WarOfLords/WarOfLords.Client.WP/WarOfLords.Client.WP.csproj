@@ -117,6 +117,7 @@
     <Content Include="Content\Images\BattleUnit-2.png" />
     <Content Include="Content\Images\BowMan-1.png" />
     <Content Include="Content\Images\BowMan-2.png" />
+    <Content Include="Content\Images\mastersheet.png" />
     <Content Include="Content\Images\MedicalMan-1.png" />
     <Content Include="Content\Images\MedicalMan-2.png" />
     <Content Include="Content\Images\Scout-1.png" />
@@ -127,6 +128,10 @@
     <Content Include="Content\Images\Trebuchet-2.png" />
     <Content Include="Content\Images\WeaponOperator-1.png" />
     <Content Include="Content\Images\WeaponOperator-2.png" />
+    <Content Include="Content\40X40\Road.png" />
+    <Content Include="Content\40X40\Tower.png" />
+    <Content Include="Content\40X40\WallH.png" />
+    <Content Include="Content\40X40\WallV.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Logo.scale-240.png" />
@@ -184,7 +189,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\levels\level0.tmx" />
+    <Content Include="Content\Maps\BattleTiledMap.png" />
+    <Content Include="Content\Maps\BattleTiledMap.tmx" />
+    <Content Include="Content\Maps\BattleTiledMapBg.tmx" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\levels\mastersheet.tsx" />
   </ItemGroup>
   <Import Project="..\WarOfLords.Client\WarOfLords.Client.projitems" Label="Shared" />
   <Import Project="..\WarOfLords.Common\WarOfLords.Common.projitems" Label="Shared" />

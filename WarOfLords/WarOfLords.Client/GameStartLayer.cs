@@ -72,6 +72,11 @@ namespace WarOfLords.Client
                     Team2BowNumber = int.Parse(txTeam2BowNumber.Text)
                 };
                 CCScene scene = new CCScene(this.Window);
+                var tileMap = new CCTileMap("BattleTiledMapBg.tmx");
+                //tileMap.AnchorPoint = new CCPoint(0.5f, 0.5f);
+                //tileMap.Position = scene.VisibleBoundsWorldspace.Center;
+                scene.AddChild(tileMap);
+
                 scene.AddChild(new GameLayer(info));
                 this.Window.RunWithScene(scene);
             });

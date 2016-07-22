@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="left-up" width="20" height="26" tilewidth="40" tileheight="40" nextobjectid="6">
+ <tileset firstgid="1" name="tileset" tilewidth="40" tileheight="40" tilecount="256" columns="16">
+  <image source="BattleTiledMap.png" width="640" height="640"/>
+ </tileset>
+ <layer name="background" width="20" height="26">
+  <data encoding="base64" compression="zlib">
+   eJztzNWWkAUAhdEZpFNaGgQESZVO6RIkpUNEQunukO4uKelSGqVLutOgQ+nujs39/wBzMWetfXm+kJDwhcWFEoEPiEgkIhOFqEQjOjGISSxiE4cPA3pxiUd8EpCQRCTmI5KQlGQkJwUpSUXqgF4aPiYt6UjPJ2QgI5+SicxkISvZyM5nAb3P+YIc5CQXuclDXvKRnwIUpBCF+ZIiAb2iFKM4JShJKUpThrKU4yvKU4GvqUilgF5lqlCVanxDdWpQk1rUpg51qUd9GvBtQK8h39GI72lME5rSjB/4kea0oCWtaE2bgF5b2tGeDnSkE53pQle60Z0e9KQXvekT0PuJvvSjPwMYyCAGM4ShDGM4IxjJKEYH9MYwlnGMZwITmcRkfmYKU5nGdGbwCzMDerOYzRzmMo/5LGAhi1jMr/zGEpayjOUBvRWsZBWr+Z0/WMNa1rGeDWxkE5vZwtaA3jb+ZDs72MkudrOHvexjPwc4yCEOcySgd5RjHOcEf/E3//AvJznFac5wlnOc50JA7yKX+I//ucwVrnKN69zgJre4zR3uci+gd58HPOQRj3nCU57xnBe85BWvecPb9+fQgGD4wsTeAfn9f4I=
+  </data>
+ </layer>
+</map>

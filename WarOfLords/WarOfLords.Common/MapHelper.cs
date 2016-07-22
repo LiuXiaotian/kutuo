@@ -4,20 +4,20 @@ using System.Collections.Generic;
 using System.Text;
 using WarOfLords.Common.Models;
 
-namespace WarOfLords.Client
+namespace WarOfLords.Common
 {
     class MapHelper
     {
-        public static float ViewWidth = 768;
-        public static float ViewHeight = 1024;
+        public static float ViewWidth = 800;
+        public static float ViewHeight = 1040;
 
         public class DefaultMap
         {
-            public static int TileSize = 200;
+            public static int TileSize = 313;
             public static MapVertex StartPoint = new MapVertex
             {
-                X = 86,
-                Y = 212
+                X = 80,
+                Y = 200
             };
 
             public static MapVertex IndexToPoint(MapTileIndex index)
@@ -90,12 +90,7 @@ namespace WarOfLords.Client
                 y = Math.Abs(orgPos.Y - StartPoint.Y) / TileSize;
                 if (orgPos.X < StartPoint.X) x = 0;
                 if (orgPos.Y < StartPoint.Y) y = 0;
-                return new MapTileIndex
-                {
-                    X = x,
-                    Y = y
-                };
-
+                return new MapTileIndex(x, y);
             }
 
             public static IEnumerable<MapVertex> GetRoutePoints(MapVertex fromPos, MapVertex toPos)
@@ -239,11 +234,11 @@ namespace WarOfLords.Client
             }
 
         }
+
+        
     }
 
-    public class MapTileIndex
-    {
-        public int X;
-        public int Y;
-    }
+
+
+    
 }

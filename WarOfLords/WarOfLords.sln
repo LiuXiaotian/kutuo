@@ -18,17 +18,17 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "WarOfLords.Client", "WarOfL
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "WarOfLords.Common", "WarOfLords.Common\WarOfLords.Common.shproj", "{5CE16E67-863E-47E4-8E89-AF8D5E2516DF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssetEdit", "AssetEdit\AssetEdit.csproj", "{013E4D1F-EBE9-4A9D-9E78-FDF6491926D2}"
+EndProject
 Global
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		WarOfLords.Common\WarOfLords.Common.projitems*{f747875e-8a1c-4146-8797-d450568be56b}*SharedItemsImports = 4
-		WarOfLords.Common\WarOfLords.Common.projitems*{574e190c-751e-4a68-bc73-8efe0464e5e0}*SharedItemsImports = 4
-		WarOfLords.Client\WarOfLords.Client.projitems*{574e190c-751e-4a68-bc73-8efe0464e5e0}*SharedItemsImports = 4
 		WarOfLords.Client\WarOfLords.Client.projitems*{3828267e-b183-46cf-907e-3823d8d3d847}*SharedItemsImports = 13
-		WarOfLords.Common\WarOfLords.Common.projitems*{f8c1d4f8-44ae-4c37-b437-741c245c1c8a}*SharedItemsImports = 4
 		WarOfLords.Client\WarOfLords.Client.projitems*{f8c1d4f8-44ae-4c37-b437-741c245c1c8a}*SharedItemsImports = 4
+		WarOfLords.Common\WarOfLords.Common.projitems*{f8c1d4f8-44ae-4c37-b437-741c245c1c8a}*SharedItemsImports = 4
 		WarOfLords.Common\WarOfLords.Common.projitems*{5ce16e67-863e-47e4-8e89-af8d5e2516df}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -106,6 +106,22 @@ Global
 		{F8C1D4F8-44AE-4C37-B437-741C245C1C8A}.Release|x86.ActiveCfg = Release|x86
 		{F8C1D4F8-44AE-4C37-B437-741C245C1C8A}.Release|x86.Build.0 = Release|x86
 		{F8C1D4F8-44AE-4C37-B437-741C245C1C8A}.Release|x86.Deploy.0 = Release|x86
+		{013E4D1F-EBE9-4A9D-9E78-FDF6491926D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{013E4D1F-EBE9-4A9D-9E78-FDF6491926D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{013E4D1F-EBE9-4A9D-9E78-FDF6491926D2}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{013E4D1F-EBE9-4A9D-9E78-FDF6491926D2}.Debug|ARM.Build.0 = Debug|Any CPU
+		{013E4D1F-EBE9-4A9D-9E78-FDF6491926D2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{013E4D1F-EBE9-4A9D-9E78-FDF6491926D2}.Debug|x64.Build.0 = Debug|Any CPU
+		{013E4D1F-EBE9-4A9D-9E78-FDF6491926D2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{013E4D1F-EBE9-4A9D-9E78-FDF6491926D2}.Debug|x86.Build.0 = Debug|Any CPU
+		{013E4D1F-EBE9-4A9D-9E78-FDF6491926D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{013E4D1F-EBE9-4A9D-9E78-FDF6491926D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{013E4D1F-EBE9-4A9D-9E78-FDF6491926D2}.Release|ARM.ActiveCfg = Release|Any CPU
+		{013E4D1F-EBE9-4A9D-9E78-FDF6491926D2}.Release|ARM.Build.0 = Release|Any CPU
+		{013E4D1F-EBE9-4A9D-9E78-FDF6491926D2}.Release|x64.ActiveCfg = Release|Any CPU
+		{013E4D1F-EBE9-4A9D-9E78-FDF6491926D2}.Release|x64.Build.0 = Release|Any CPU
+		{013E4D1F-EBE9-4A9D-9E78-FDF6491926D2}.Release|x86.ActiveCfg = Release|Any CPU
+		{013E4D1F-EBE9-4A9D-9E78-FDF6491926D2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

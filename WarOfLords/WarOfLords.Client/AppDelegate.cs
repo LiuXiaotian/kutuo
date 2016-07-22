@@ -20,13 +20,13 @@ namespace WarOfLords.Client
 #endif
             
             application.ContentRootDirectory = "Content";
-            var contentSearchPaths = new List<string>() { "Fonts", "Sounds", "Images" };
+            var contentSearchPaths = new List<string>() { "Fonts", "Sounds", "Images","Maps", "40X40" };
             application.ContentSearchPaths.AddRange(contentSearchPaths);
 
             var windowSize = mainWindow.WindowSizeInPixels;
             
-            var desiredWidth = 768.0f;
-            var desiredHeight = 1024.0f;
+            var desiredWidth = 20*40f;
+            var desiredHeight = 26*40f;
 
             // This will set the world bounds to be (0,0, w, h)
             // CCSceneResolutionPolicy.ShowAll will ensure that the aspect ratio is preserved
