@@ -29,19 +29,6 @@ namespace WarOfLords.Client
             Opacity = 255;
         }
 
-        public void AddMonkey ()
-        {
-            //var spriteSheet = new CCSpriteSheet ("animations/monkey.plist");
-            //var frame = spriteSheet.Frames.Find ((x) => x.TextureFilename.StartsWith ("frame"));
-           
-            //var monkey = new CCSprite (frame) {
-            //    Position = new CCPoint (VisibleBoundsWorldspace.Size.Center.X + 20, VisibleBoundsWorldspace.Size.Center.Y + 300),
-            //    Scale = 0.5f
-            //};
-
-            //AddChild (monkey);
-        }
-
         protected override void AddedToScene ()
         {
             base.AddedToScene ();
@@ -67,18 +54,6 @@ namespace WarOfLords.Client
             };
 
             AddChild (playAgainLabel);
-
-            AddMonkey ();
         }
-
-        //public static CCScene SceneWithScore (CCWindow mainWindow, int score)
-        //{
-        //    var scene = new CCScene (mainWindow);
-        //    var layer = new GameOverLayer (score);
-
-        //    scene.AddChild (layer);
-
-        //    return scene;
-        //}
     }
 }

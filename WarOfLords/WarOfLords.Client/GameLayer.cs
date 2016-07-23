@@ -16,13 +16,11 @@ namespace WarOfLords.Client
         // Define a label variable
         CCLabel team1Label;
         CCLabel team2Label;
-        SwordMan swordMan;
         BattleTeam battleTeam1;
         BattleTeam battleTeam2;
         BattleManager battleManager;
         CancellationTokenSource cancelSourceForMessageLoopUp = new CancellationTokenSource();
         BattleInfo battleInfo;
-        CCTileMap tileMap;
 
         public GameLayer(BattleInfo info) : base(CCColor4B.White)
         {
@@ -32,28 +30,14 @@ namespace WarOfLords.Client
             AddEventListener(touchListener, this);
             
             this.Opacity = 0;
-            //CCSprite backgroupSprite = new CCSprite("background");
-            //backgroupSprite.ZOrder = 0;
-            //backgroupSprite.AnchorPoint = new CCPoint(0, 0);
-            //backgroupSprite.Position = new CCPoint(0, 0);
-            //AddChild(backgroupSprite);
         }
 
         protected override void AddedToScene()
         {
             base.AddedToScene();
 
-           
-
-            //CCTileMapLayer tileLayer = tileMap.LayerNamed("Tile Layer 1");
-            //CCTileMapCoordinates coor = new CCTileMapCoordinates(1, 1);
-            //CCSprite tileSprite = tileLayer.ExtractTile(coor);
-
             // Use the bounds to layout the positioning of our drawable assets
             var bounds = VisibleBoundsWorldspace;
-
-            // position the label on the center of the screen
-            //label.Position = bounds.Center;
 
             // Register for touch events
             var touchListener = new CCEventListenerTouchAllAtOnce();
@@ -76,13 +60,6 @@ namespace WarOfLords.Client
             team2Label.AnchorPoint = new CCPoint(0, 1);
             AddChild(team2Label);
 
-            //CCCallFuncN moveBananaComplete = new CCCallFuncN(node =>
-            //{
-            //    CCScene scene = new CCScene(GameView);
-            //    scene.AddLayer(new GameOverLayer(500));
-            //    GameView.RunWithScene(scene);
-            //});
-
             initBattleTeams();
 
         }
@@ -91,13 +68,6 @@ namespace WarOfLords.Client
         {
             if (touches.Count > 0)
             {
-                //await swordMan.MoveTo(new MapVertex { X = (int)touches[0].Location.X, Y = (int)touches[0].Location.Y });
-                //MapVertex attackPos = new MapVertex
-                //{
-                //    X = (int)touches[0].Location.X,
-                //    Y = (int)touches[0].Location.Y,
-                //    Z = 0
-                //};
                 //var onTrackPos = MapHelper.DefaultMap.NeareastOnTrackPoint(attackPos);
                 var targeTile = battleTeam1.BattleFieldMap.GetClosestReachableTile(touches[0].Location.X, touches[0].Location.Y);
                 var targetPos = battleTeam1.BattleFieldMap.TileCenter(targeTile);

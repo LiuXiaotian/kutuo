@@ -80,6 +80,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\Content\Fonts\MarkerFelt-22.xnb" />
+    <AndroidAsset Include="Assets\Content\levels\level0.tmx" />
+    <AndroidAsset Include="Assets\Content\Maps\BattleTiledMap.tmx" />
+    <AndroidAsset Include="Assets\Content\Maps\BattleTiledMapBg.tmx" />
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
@@ -148,6 +151,27 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\Content\Images\background.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Content\40X40\Road.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Content\40X40\Tower.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Content\40X40\WallH.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Content\40X40\WallV.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Content\Images\mastersheet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Content\levels\mastersheet.tsx" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Content\Maps\BattleTiledMap.png" />
   </ItemGroup>
   <Import Project="..\WarOfLords.Client\WarOfLords.Client.projitems" Label="Shared" />
   <Import Project="..\WarOfLords.Common\WarOfLords.Common.projitems" Label="Shared" />

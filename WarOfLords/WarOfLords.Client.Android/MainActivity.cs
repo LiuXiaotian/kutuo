@@ -19,14 +19,12 @@ namespace WarOfLords.Client.Android
         Theme = "@android:style/Theme.NoTitleBar",
         LaunchMode = LaunchMode.SingleInstance,
         ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.Keyboard | ConfigChanges.KeyboardHidden)]
-    public class MainActivity : Activity
+    public class MainActivity : AndroidGameActivity
     { 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
 
-            // Set our view from the "main" layout resource
-            SetContentView(Resource.Layout.Main);
 
             // Get our game view from the layout resource,
             // and attach the view created event to it
@@ -34,11 +32,12 @@ namespace WarOfLords.Client.Android
             //gameView.ViewCreated += ClientApplicationDelegate.LoadGame;
 
             var application = new CCApplication();
-            application.ApplicationDelegate = new GameAppDelegate();
+            application.ApplicationDelegate = new AppDelegate();
             SetContentView(application.AndroidContentView);
             application.StartGame();
             application.AndroidContentView.RequestFocus();
-            application.AndroidContentView.KeyPress += HandleKeyPress;
+            //application.AndroidContentView.KeyPress += HandleKeyPress;
+            
         }
     }
 }

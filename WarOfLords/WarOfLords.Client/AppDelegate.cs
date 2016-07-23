@@ -35,16 +35,16 @@ namespace WarOfLords.Client
             // Determine whether to use the high or low def versions of our images
             // Make sure the default texel to content size ratio is set correctly
             // Of course you're free to have a finer set of image resolutions e.g (ld, hd, super-hd)
-            if (desiredWidth < windowSize.Width)
-            {
-                application.ContentSearchPaths.Add("hd");
-                CCSprite.DefaultTexelToContentSizeRatio = 2.0f;
-            }
-            else
-            {
-                application.ContentSearchPaths.Add("ld");
-                CCSprite.DefaultTexelToContentSizeRatio = 1.0f;
-            }
+            //if (desiredWidth < windowSize.Width)
+            //{
+            //    application.ContentSearchPaths.Add("hd");
+            //    CCSprite.DefaultTexelToContentSizeRatio = 2.0f;
+            //}
+            //else
+            //{
+            //    application.ContentSearchPaths.Add("ld");
+            //    CCSprite.DefaultTexelToContentSizeRatio = 1.0f;
+            //}
 
             var scene = new CCScene(mainWindow);
             var startLayer = new GameStartLayer();

@@ -84,16 +84,7 @@ namespace WarOfLords.Client
 
             CCMenuItemLabel exitMenuItem = new CCMenuItemLabel(exitLabel, (obj) =>
             {
-                BattleInfo info = new BattleInfo
-                {
-                    Team1SwordNumber = int.Parse(txTeam1SwordNumber.Text),
-                    Team1BowNumber = int.Parse(txTeam1BowNumber.Text),
-                    Team2SwordNumber = int.Parse(txTeam2SwordNumber.Text),
-                    Team2BowNumber = int.Parse(txTeam2BowNumber.Text)
-                };
-                CCScene scene = new CCScene(Window);
-                scene.AddChild(new GameLayer(info));
-                Window.RunWithScene(scene);
+                Application.ExitGame();
             });
             exitMenuItem.AnchorPoint = CCPoint.Zero;
 
