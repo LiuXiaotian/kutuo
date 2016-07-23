@@ -95,26 +95,26 @@ namespace WarOfLords.Common
             return unitList;
         }
 
-        public static BattleTeam MakeBattleTeam(
-            BattleManager battleManager,
-            string country,
-            string federation,
-            string teamName,
-            int swordManCount,
-            int bowManCount,
-            int medicalManCount,
-            int trebuchetCount,
-            int scoutCount)
-        {
-            BattleTeam team = new BattleTeam(NewId(), teamName, country, federation, battleManager);
-            team.AddBattleUnitRange(MakeSwordMen("SwordMan", swordManCount));
-            team.AddBattleUnitRange(MakeBowMen("BowMan", bowManCount));
-            team.AddBattleUnitRange(MakeMedicalMen("MedicalMan", medicalManCount));
-            team.AddBattleUnitRange(MakeTrebuchets("Trebuchet", trebuchetCount));
-            team.AddBattleUnitRange(MakeScouts("Scout", scoutCount));
+        //public static BattleTeam MakeBattleTeam(
+        //    BattleManager battleManager,
+        //    string country,
+        //    string federation,
+        //    string teamName,
+        //    int swordManCount,
+        //    int bowManCount,
+        //    int medicalManCount,
+        //    int trebuchetCount,
+        //    int scoutCount)
+        //{
+        //    BattleTeam team = new BattleTeam(NewId(), teamName, country, federation, battleManager);
+        //    team.AddBattleUnitRange(MakeSwordMen("SwordMan", swordManCount));
+        //    team.AddBattleUnitRange(MakeBowMen("BowMan", bowManCount));
+        //    team.AddBattleUnitRange(MakeMedicalMen("MedicalMan", medicalManCount));
+        //    team.AddBattleUnitRange(MakeTrebuchets("Trebuchet", trebuchetCount));
+        //    team.AddBattleUnitRange(MakeScouts("Scout", scoutCount));
 
-            return team;
-        }
+        //    return team;
+        //}
 
         public static void MakeArmy(
             BattleTeam team,

@@ -43,10 +43,10 @@ namespace WarOfLords.Client
             AddChild(txTeam1SwordNumber);
             AddChild(txTeam2BowNumber);
             AddChild(txTeam2SwordNumber);
-            txTeam1SwordNumber.Text = "50";
-            txTeam1BowNumber.Text = "50";
-            txTeam2SwordNumber.Text = "50";
-            txTeam2BowNumber.Text = "50";
+            txTeam1SwordNumber.Text = "15";
+            txTeam1BowNumber.Text = "5";
+            txTeam2SwordNumber.Text = "5";
+            txTeam2BowNumber.Text = "15";
 
             startLabel = new CCLabel("Start to Fight", "arial", 50)
             {

@@ -30,8 +30,15 @@ namespace WarOfLords.Client.Android
 
             // Get our game view from the layout resource,
             // and attach the view created event to it
-            CCGameView gameView = (CCGameView)FindViewById(Resource.Id.GameView);
-            gameView.ViewCreated += ClientApplicationDelegate.LoadGame;
+            //CCGameView gameView = (CCGameView)FindViewById(Resource.Id.GameView);
+            //gameView.ViewCreated += ClientApplicationDelegate.LoadGame;
+
+            var application = new CCApplication();
+            application.ApplicationDelegate = new GameAppDelegate();
+            SetContentView(application.AndroidContentView);
+            application.StartGame();
+            application.AndroidContentView.RequestFocus();
+            application.AndroidContentView.KeyPress += HandleKeyPress;
         }
     }
 }

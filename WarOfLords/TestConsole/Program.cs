@@ -5,10 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using WarOfLords.Client;
 using WarOfLords.Common;
 using WarOfLords.Common.Models;
-using static WarOfLords.Client.MapHelper;
 
 namespace TestConsole
 {
@@ -16,65 +14,13 @@ namespace TestConsole
     {
         static bool stop = false;
         static BattleManager BattleManager;
-        static void Main(string[] args)
+        static void Main(string[] args) 
         {
-            TileMap map = new TileMap(20, 26, 40, 40);
-            map.AddReachableTilesInColumn(5, 20, 2);
-            map.AddReachableTilesInColumn(5, 20, 7);
-            map.AddReachableTilesInColumn(5, 20, 12);
-            map.AddReachableTilesInColumn(5, 20, 17);
-            map.AddReachableTilesInColumn(11, 14, 1);
-            map.AddReachableTilesInColumn(11, 14, 18);
+            TileMap map = TileMap.DefaultInstance();
 
-            map.AddReachableTilesInRow(2, 17, 5);
-            map.AddReachableTilesInRow(2, 17, 10);
-            map.AddReachableTilesInRow(2, 17, 15);
-            map.AddReachableTilesInRow(2, 17, 20);
-            map.AddReachableTilesInRow(8, 11, 4);
-            map.AddReachableTilesInRow(8, 11, 21);
-
-            map.AddHubTile(new MapTileIndex(2, 5));
-            map.AddHubTile(new MapTileIndex(7, 5));
-            map.AddHubTile(new MapTileIndex(12, 5));
-            map.AddHubTile(new MapTileIndex(17, 5));
-
-            map.AddHubTile(new MapTileIndex(2, 10));
-            map.AddHubTile(new MapTileIndex(7, 10));
-            map.AddHubTile(new MapTileIndex(12, 10));
-            map.AddHubTile(new MapTileIndex(17, 10));
-
-            map.AddHubTile(new MapTileIndex(2, 15));
-            map.AddHubTile(new MapTileIndex(7, 15));
-            map.AddHubTile(new MapTileIndex(12, 15));
-            map.AddHubTile(new MapTileIndex(17, 15));
-
-            map.AddHubTile(new MapTileIndex(2, 20));
-            map.AddHubTile(new MapTileIndex(7, 20));
-            map.AddHubTile(new MapTileIndex(12, 20));
-            map.AddHubTile(new MapTileIndex(17, 20));
-
-            map.AddHubTile(new MapTileIndex(8, 5));
-            map.AddHubTile(new MapTileIndex(9, 5));
-            map.AddHubTile(new MapTileIndex(10, 5));
-            map.AddHubTile(new MapTileIndex(11, 5));
-
-            map.AddHubTile(new MapTileIndex(8, 20));
-            map.AddHubTile(new MapTileIndex(9, 20));
-            map.AddHubTile(new MapTileIndex(10, 20));
-            map.AddHubTile(new MapTileIndex(11, 20));
-
-            map.AddHubTile(new MapTileIndex(2, 11));
-            map.AddHubTile(new MapTileIndex(2, 12));
-            map.AddHubTile(new MapTileIndex(2, 13));
-            map.AddHubTile(new MapTileIndex(2, 14));
-
-            map.AddHubTile(new MapTileIndex(17, 11));
-            map.AddHubTile(new MapTileIndex(17, 12));
-            map.AddHubTile(new MapTileIndex(17, 13));
-            map.AddHubTile(new MapTileIndex(17, 14));
-
-            var navResult = map.SearchWay(new MapTileIndex(8, 4), new MapTileIndex(11, 21));
+            var navResult = map.SearchWay(new MapTileIndex(3, 5), new MapTileIndex(8, 21));
             navResult.Optimize();
+
         }
 
        //static void Main(string[] args)

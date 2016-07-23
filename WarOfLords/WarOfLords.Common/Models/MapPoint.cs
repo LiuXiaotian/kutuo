@@ -64,17 +64,17 @@ namespace WarOfLords.Common.Models
                 Y = y
             };
 
-            if(map.PointReachable(point))
-            {
-                map.LeavePoint(this);
-                this.X = x;
-                this.Y = y;
-                map.EnterPoint(point);
-            }
-            else
-            {
-                this.Moved(moveTo, moved - 1, map);
-            }
+            //if(map.PointReachable(point))
+            //{
+            //    map.LeavePoint(this);
+            this.X = x;
+            this.Y = y;
+            //    map.EnterPoint(point);
+            //}
+            //else
+            //{
+            //    this.Moved(moveTo, moved - 1, map);
+            //}
         }
 
         public override bool Equals(object obj)

@@ -91,16 +91,18 @@ namespace WarOfLords.Client
         {
             if (touches.Count > 0)
             {
-               //await swordMan.MoveTo(new MapVertex { X = (int)touches[0].Location.X, Y = (int)touches[0].Location.Y });
-                MapVertex attackPos = new MapVertex
-                {
-                    X = (int)touches[0].Location.X,
-                    Y = (int)touches[0].Location.Y,
-                    Z = 0
-                };
-                var onTrackPos = MapHelper.DefaultMap.NeareastOnTrackPoint(attackPos);
-                var task1 = battleTeam1.Attack(onTrackPos);
-                var task2 = battleTeam2.Attack(onTrackPos);
+                //await swordMan.MoveTo(new MapVertex { X = (int)touches[0].Location.X, Y = (int)touches[0].Location.Y });
+                //MapVertex attackPos = new MapVertex
+                //{
+                //    X = (int)touches[0].Location.X,
+                //    Y = (int)touches[0].Location.Y,
+                //    Z = 0
+                //};
+                //var onTrackPos = MapHelper.DefaultMap.NeareastOnTrackPoint(attackPos);
+                var targeTile = battleTeam1.BattleFieldMap.GetClosestReachableTile(touches[0].Location.X, touches[0].Location.Y);
+                var targetPos = battleTeam1.BattleFieldMap.TileCenter(targeTile);
+                var task1 = battleTeam1.Attack(targetPos);
+                var task2 = battleTeam2.Attack(targetPos);
                 await Task.WhenAll(task1, task2);
             }
         }
@@ -114,7 +116,7 @@ namespace WarOfLords.Client
             string federation2 = "F2";
 
             ArmyMaker armyMaker = new ArmyMaker();
-            MapMaker mapMaker = new MapMaker();
+            TileMap map = TileMap.DefaultInstance();
 
             battleManager = new BattleManager();
 
@@ -124,8 +126,19 @@ namespace WarOfLords.Client
             battleManager.CountryBattleTeamsMapDic.AddOrUpdate(country1, new List<BattleTeam>(), (key, oldValue) => oldValue);
             battleManager.CountryBattleTeamsMapDic.AddOrUpdate(country2, new List<BattleTeam>(), (key, oldValue) => oldValue);
 
-            battleTeam1 = new BattleTeam(ArmyMaker.NewId(), "C1.T1", country1, federation1,  this.battleManager);
-            battleTeam2 = new BattleTeam(ArmyMaker.NewId(), "C2.T2", country2, federation2, this.battleManager);
+            List<MapTileIndex> team1Tiles = new List<MapTileIndex>();
+            team1Tiles.Add(new MapTileIndex(8, 4));
+            team1Tiles.Add(new MapTileIndex(9, 4));
+            team1Tiles.Add(new MapTileIndex(10, 4));
+            team1Tiles.Add(new MapTileIndex(11, 4));
+            List<MapTileIndex> team2Tiles = new List<MapTileIndex>();
+            team2Tiles.Add(new MapTileIndex(8, 21));
+            team2Tiles.Add(new MapTileIndex(9, 21));
+            team2Tiles.Add(new MapTileIndex(10, 21));
+            team2Tiles.Add(new MapTileIndex(11, 21));
+
+            battleTeam1 = new BattleTeam(ArmyMaker.NewId(), "C1.T1", country1, federation1, map, team1Tiles,  this.battleManager);
+            battleTeam2 = new BattleTeam(ArmyMaker.NewId(), "C2.T2", country2, federation2, map, team2Tiles, this.battleManager);
 
             battleManager.CountryBattleTeamsMapDic[country1].Add(battleTeam1);
             battleManager.CountryBattleTeamsMapDic[country2].Add(battleTeam2);
@@ -140,33 +153,6 @@ namespace WarOfLords.Client
 
             battleManager.CountryBattleTeamsMapDic[country1].Add(battleTeam1);
             battleManager.CountryBattleTeamsMapDic[country2].Add(battleTeam2);
-
-            var map = MapMaker.MakeRectMap(
-                new MapVertex
-                {
-                    X = 0,
-                    Y = 0,
-                    Z = 0
-                }, 
-                (int)this.VisibleBoundsWorldspace.MaxX,
-                (int)this.VisibleBoundsWorldspace.MaxY
-                );
-
-            battleTeam1.EnterMap(map);
-            battleTeam1.Position = new MapVertex
-            {
-                X = (int)this.VisibleBoundsWorldspace.MaxX / 2, //this.GameView.DesignResolution.Width / 2,
-                Y = 30,
-                Z = 0
-            }; 
-
-            battleTeam2.EnterMap(map);
-            battleTeam2.Position = new MapVertex
-            {
-                X = (int)this.VisibleBoundsWorldspace.MaxX / 2,// this.GameView.DesignResolution.Width / 2,
-                Y = (int)this.VisibleBoundsWorldspace.MaxY - 50,//this.GameView.DesignResolution.Height - 50,
-                Z = 0
-            };
 
             var center = new MapVertex
             {

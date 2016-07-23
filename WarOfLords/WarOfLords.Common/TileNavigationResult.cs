@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using WarOfLords.Client;
 
 namespace WarOfLords.Common
 {
@@ -24,6 +23,7 @@ namespace WarOfLords.Common
             MapTileIndex last = null;
             MapTileIndex current = null;
             bool hasMore = tileEnum.MoveNext();
+
             while (hasMore)
             {
                 if (last == null)
@@ -50,6 +50,18 @@ namespace WarOfLords.Common
             foreach (var removeTile in removingTiles)
             {
                 this.RoutingTiles.Remove(removeTile);
+            }
+
+            int lastFromIndex = this.RoutingTiles.FindLastIndex(_ => _.HashValue == this.FromTile.HashValue);
+            if(lastFromIndex > 0)
+            {
+                this.RoutingTiles.RemoveRange(0, lastFromIndex);
+            }
+
+            int firstToIndex = this.RoutingTiles.FindIndex(_ => _.HashValue == this.ToTile.HashValue);
+            if (firstToIndex > 0 && firstToIndex < (this.RoutingTiles.Count - 1))
+            {
+                this.RoutingTiles.RemoveRange(firstToIndex + 1, this.RoutingTiles.Count - 1 - firstToIndex);
             }
         }
 

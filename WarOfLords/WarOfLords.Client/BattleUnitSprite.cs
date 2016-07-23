@@ -29,6 +29,10 @@ namespace WarOfLords.Client
             var texture = new CCTexture2D(getFileFromUnitType() + "-" + teamId);
             this.SpriteFrame = new CCSpriteFrame(texture, new CCRect(0, 0, texture.PixelsWide, texture.PixelsHigh));
             this.AnchorPoint = new CCPoint(0.5f, 0.5f);
+            if(this.battleUnit.Position !=null)
+            {
+                this.Position = new CCPoint(battleUnit.Position.X, battleUnit.Position.Y);
+            }
             spriteCancelSource = new CancellationTokenSource();
             //this.runAsync(spriteCancelSource.Token);
             this.Schedule();
@@ -83,41 +87,41 @@ namespace WarOfLords.Client
             return "BattleUnit";
         }
 
-        async Task runAsync(CancellationToken cancelToken)
-        {
-            try
-            {
-                while (this.battleUnit.Health > 0 && !cancelToken.IsCancellationRequested)
-                {
-                    try
-                    {
+        //async Task runAsync(CancellationToken cancelToken)
+        //{
+        //    try
+        //    {
+        //        while (this.battleUnit.Health > 0 && !cancelToken.IsCancellationRequested)
+        //        {
+        //            try
+        //            {
                         
-                        CCAction action;
-                        while (this.actionQ.TryDequeue(out action))
-                        {
-                            this.AddAction(action);
-                        }
-                        await Task.Delay(100);
-                    }
-                    catch { };
-                }
+        //                CCAction action;
+        //                while (this.actionQ.TryDequeue(out action))
+        //                {
+        //                    this.AddAction(action);
+        //                }
+        //                await Task.Delay(100);
+        //            }
+        //            catch { };
+        //        }
 
-                if (this.battleUnit.Health <= 0)
-                {
-                    //var deadTexture = new CCTexture2D("Dead");
-                    //this.ReplaceTexture(deadTexture, new CCRect(0, 0, deadTexture.PixelsWide, deadTexture.PixelsHigh));
+        //        if (this.battleUnit.Health <= 0)
+        //        {
+        //            //var deadTexture = new CCTexture2D("Dead");
+        //            //this.ReplaceTexture(deadTexture, new CCRect(0, 0, deadTexture.PixelsWide, deadTexture.PixelsHigh));
 
-                    this.battleUnit.OnHealthChanged -= OnBattleUnitHealthChanged;
-                    this.battleUnit.OnPositionChanged -= OnBattleUnitPositionChanged;
-                    this.battleUnit.OnPositionInited -= OnBattleUnitPositionInited;
-                    this.RemoveFromParent();
-                }
-            }
-            catch (Exception ex)
-            {
+        //            this.battleUnit.OnHealthChanged -= OnBattleUnitHealthChanged;
+        //            this.battleUnit.OnPositionChanged -= OnBattleUnitPositionChanged;
+        //            this.battleUnit.OnPositionInited -= OnBattleUnitPositionInited;
+        //            this.RemoveFromParent();
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
                 
-            }
+        //    }
             
-        }
+        //}
     }
 }

@@ -1,14 +1,17 @@
 ﻿
+using System;
 using System.Collections.Generic;
+using WarOfLords.Common.Models;
 
 namespace WarOfLords.Common
 { 
-    public class TileMap
+    public class TileMap : Map
     {
         public int Row = 26;
         public int Column = 20;
         public int TileWidth = 40;
         public int TileHeight = 40;
+       
 
         public TileMap(int row, int column, int tileWidth, int tileHeight)
         {
@@ -62,6 +65,24 @@ namespace WarOfLords.Common
         public bool IsReachable(MapTileIndex tile)
         {
             return this.ReachableTiles.ContainsKey(tile.HashValue);
+        }
+
+        public MapTileIndex GetClosestReachableTile(float x, float y)
+        {
+            var tile = this.GetTileIndex(x, y);
+            if(this.ReachableTiles.ContainsKey(tile.HashValue))return tile;
+            MapTileIndex closestTile = null;
+            int currentDistance = int.MaxValue;
+            foreach (var hubTile in this.ReachableTiles.Values)
+            {
+                int distanceSq = (tile.X - hubTile.X) * (tile.X - hubTile.X) + (tile.Y - hubTile.Y) * (tile.Y - hubTile.Y);
+                if (distanceSq < currentDistance)
+                {
+                    currentDistance = distanceSq;
+                    closestTile = hubTile;
+                }
+            }
+            return closestTile;
         }
 
         public TileNavigationResult AreReachableInRow(int fromColumn, int toColumn, int row)
@@ -171,7 +192,7 @@ namespace WarOfLords.Common
                 }
                 if (hubTile.X == tile.X || hubTile.Y == tile.Y)
                 {
-                    int distanceSq = (tile.X - hubTile.X) * (tile.X - hubTile.X) + (tile.X - hubTile.Y) * (tile.X - hubTile.Y);
+                    int distanceSq = (tile.X - hubTile.X) * (tile.X - hubTile.X) + (tile.Y - hubTile.Y) * (tile.Y - hubTile.Y);
                     if (hubTile.X == tile.X)
                     {
                         var way = AreReachableInColumn(tile.Y, hubTile.Y, tile.X);
@@ -283,27 +304,30 @@ namespace WarOfLords.Common
 
             if (possiableWays.Count == 0) return null;
 
-            foreach (var way in possiableWays)
-            {
-                if (way.ToTile.HashValue == toHubTile.HashValue)
-                {
-                    return way;
-                }
-                excludedTileHashs.AddRange(way.GetAllPassingHashs());
-            }
-
             int distance = int.MaxValue;
             TileNavigationResult shortestWay = null;
 
             foreach (var way in possiableWays)
             {
+                excludedTileHashs.AddRange(way.GetAllPassingHashs());
+                if (way.ToTile.HashValue == toHubTile.HashValue)
+                {
+                    if (distance > way.RoutingTiles.Count)
+                    {
+                        distance = way.RoutingTiles.Count;
+                        shortestWay = way;
+                    }
+                    //return way;
+                    continue;
+                }
+                
                 var nextWay = SearchWayBetweenTwoHubTiles(way.ToTile, toHubTile, excludedTileHashs);
                 if (nextWay != null)
                 {
                     way.RoutingTiles.AddRange(nextWay.RoutingTiles);
                     way.IsReachable = true;
                     way.ToTile = toHubTile;
-                    way.Optimize();
+                    ///way.Optimize();
                     if (distance > way.RoutingTiles.Count)
                     {
                         distance = way.RoutingTiles.Count;
@@ -322,7 +346,7 @@ namespace WarOfLords.Common
             int currentDistance = int.MaxValue;
             foreach (var hubTile in this.HubTiles.Values)
             {
-                int distanceSq = (tile.X - hubTile.X) * (tile.X - hubTile.X) + (tile.X - hubTile.Y) * (tile.X - hubTile.Y);
+                int distanceSq = (tile.X - hubTile.X) * (tile.X - hubTile.X) + (tile.Y - hubTile.Y) * (tile.Y - hubTile.Y);
                 if (distanceSq < currentDistance)
                 {
                     currentDistance = distanceSq;
@@ -400,23 +424,213 @@ namespace WarOfLords.Common
             var navResultBetweenHubs = SearchWayBetweenTwoHubTiles(fromHubTile, toHubTile, null);
             if (navResultBetweenHubs != null)
             {
+
                 navResult.RoutingTiles.AddRange(navResultBetweenHubs.RoutingTiles);
                 navResult.ToTile = navResultBetweenHubs.ToTile;
                 if (toHubTile.HashValue == toTile.HashValue)
                 {
                     navResult.IsReachable = true;
+                    navResult.Optimize();
                     return navResult;
                 }
             }
+            else
+            {
+                navResult.IsReachable = false;
+                return navResult;
+            }
+
+
             if (lastHubWayToEnd != null)
             {
                 lastHubWayToEnd.RoutingTiles.Reverse();
-                navResult.RoutingTiles.AddRange(navResultBetweenHubs.RoutingTiles);
-                navResult.ToTile = navResultBetweenHubs.ToTile;
+                navResult.RoutingTiles.AddRange(lastHubWayToEnd.RoutingTiles);
+                navResult.ToTile = toTile;
                 navResult.IsReachable = true;
-                return navResult;
             }
+
+            if (navResult != null) navResult.Optimize();
+
             return navResult;
         }
+
+        public MapTileIndex GetTileIndex(float x, float y)
+        {
+            return GetTileIndex((int)x, (int)y);
+        }
+
+        public MapTileIndex GetTileIndex(int x, int y)
+        {
+            return new MapTileIndex(x / TileWidth, y / TileHeight);
+        }
+
+        public MapTileIndex GetTileIndex(MapVertex pos)
+        {
+            return GetTileIndex(pos.X, pos.Y);
+        }
+
+        public bool InTile(int x, int y, MapTileIndex tile)
+        {
+            return tile.X ==  x / TileWidth && tile.Y == y / TileHeight;
+        }
+
+        public MapVertex TileCenter(MapTileIndex tile)
+        {
+            int minX = tile.X * TileWidth;
+            int minY = tile.Y * TileHeight;
+
+            return new MapVertex { X = minX + TileWidth / 2, Y = minY + TileHeight / 2 , Z = 0};
+        }
+
+        public MapVertex FindReachablePointInTile(IMovementCapability entity, MapTileIndex tile)
+        {
+            MapVertex center = TileCenter(tile);
+            if (InTile(entity.Position.X, entity.Position.Y, tile))
+            {
+                return center;
+            }
+
+            if (this.CheckCollisionMethod == null || !this.CheckCollisionMethod(entity, center))
+            {
+                return center;
+            }
+
+            Random ran = new Random();
+            int tryTimes = 3;
+            int xRange = TileWidth / 2 - 1;
+            int yRange = TileHeight / 2 - 1;
+
+            while (tryTimes > 0)
+            {
+                int xOff = ran.Next(-xRange,  xRange);
+                int yOff = ran.Next(-yRange, yRange);
+
+                MapVertex temp = new MapVertex
+                {
+                    X = center.X + xOff,
+                    Y = center.Y + yOff,
+                    Z = 0
+                };
+
+                if(!this.CheckCollisionMethod(entity, temp))
+                {
+                    return temp;
+                }
+
+                tryTimes--;
+            }
+
+            return center;
+        }
+
+        public MapVertex FindReachablePointInTiles(IMovementCapability entity, IEnumerable<MapTileIndex> tiles)
+        {
+            MapVertex center = null;
+            foreach (var tile in tiles)
+            {
+                center = TileCenter(tile);
+
+                if (this.CheckCollisionMethod == null || !this.CheckCollisionMethod(entity, center))
+                {
+                    return center;
+                }
+
+                Random ran = new Random();
+                int tryTimes = 3;
+                int xRange = TileWidth / 2 - 1;
+                int yRange = TileHeight / 2 - 1;
+
+                while (tryTimes > 0)
+                {
+                    int xOff = ran.Next(-xRange, xRange);
+                    int yOff = ran.Next(-yRange, yRange);
+
+                    MapVertex temp = new MapVertex
+                    {
+                        X = center.X + xOff,
+                        Y = center.Y + yOff
+                    };
+
+                    if (!this.CheckCollisionMethod(entity, temp))
+                    {
+                        return temp;
+                    }
+
+                    tryTimes--;
+                }
+            }
+            return center;
+        }
+
+        public static TileMap DefaultInstance()
+        {
+            TileMap map = new TileMap(20, 26, 40, 40);
+            map.AddReachableTilesInColumn(5, 20, 2);
+            map.AddReachableTilesInColumn(5, 20, 7);
+            map.AddReachableTilesInColumn(5, 20, 12);
+            map.AddReachableTilesInColumn(5, 20, 17);
+            map.AddReachableTilesInColumn(11, 14, 1);
+            map.AddReachableTilesInColumn(11, 14, 18);
+
+            map.AddReachableTilesInRow(2, 17, 5);
+            map.AddReachableTilesInRow(2, 17, 10);
+            map.AddReachableTilesInRow(2, 17, 15);
+            map.AddReachableTilesInRow(2, 17, 20);
+            map.AddReachableTilesInRow(8, 11, 4);
+            map.AddReachableTilesInRow(8, 11, 21);
+
+            map.AddHubTile(new MapTileIndex(2, 5));
+            map.AddHubTile(new MapTileIndex(7, 5));
+            map.AddHubTile(new MapTileIndex(12, 5));
+            map.AddHubTile(new MapTileIndex(17, 5));
+
+            map.AddHubTile(new MapTileIndex(2, 10));
+            map.AddHubTile(new MapTileIndex(7, 10));
+            map.AddHubTile(new MapTileIndex(12, 10));
+            map.AddHubTile(new MapTileIndex(17, 10));
+
+            map.AddHubTile(new MapTileIndex(2, 15));
+            map.AddHubTile(new MapTileIndex(7, 15));
+            map.AddHubTile(new MapTileIndex(12, 15));
+            map.AddHubTile(new MapTileIndex(17, 15));
+
+            map.AddHubTile(new MapTileIndex(2, 20));
+            map.AddHubTile(new MapTileIndex(7, 20));
+            map.AddHubTile(new MapTileIndex(12, 20));
+            map.AddHubTile(new MapTileIndex(17, 20));
+
+            map.AddHubTile(new MapTileIndex(8, 5));
+            map.AddHubTile(new MapTileIndex(9, 5));
+            map.AddHubTile(new MapTileIndex(10, 5));
+            map.AddHubTile(new MapTileIndex(11, 5));
+
+            map.AddHubTile(new MapTileIndex(8, 20));
+            map.AddHubTile(new MapTileIndex(9, 20));
+            map.AddHubTile(new MapTileIndex(10, 20));
+            map.AddHubTile(new MapTileIndex(11, 20));
+
+            map.AddHubTile(new MapTileIndex(2, 11));
+            map.AddHubTile(new MapTileIndex(2, 12));
+            map.AddHubTile(new MapTileIndex(2, 13));
+            map.AddHubTile(new MapTileIndex(2, 14));
+
+            map.AddHubTile(new MapTileIndex(17, 11));
+            map.AddHubTile(new MapTileIndex(17, 12));
+            map.AddHubTile(new MapTileIndex(17, 13));
+            map.AddHubTile(new MapTileIndex(17, 14));
+
+            map.CheckCollisionMethod = (a, b) =>
+            {
+                Random ran = new Random();
+                if (ran.Next(0, 100) > 50)
+                {
+                    return true;
+                }
+                return false;
+            };
+            return map;
+        }
     }
+
+    
 }

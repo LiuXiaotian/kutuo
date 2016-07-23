@@ -15,11 +15,11 @@ namespace WarOfLords.Common.Models
         private string enemyFederation;
         private Dictionary<int, CancellationTokenSource> moveCancelTokenSourceList;
         private ConcurrentDictionary<int, BattleUnit> DetectedEnemyUnits;
-        private MapVertex teamPosition;
+        private IEnumerable<MapTileIndex> positionTies;
         private ConcurrentDictionary<int, IEnumerable<BattleUnit>> SubTeamDics;
         private BattleManager BattleManager;
 
-        public BattleTeam(int id, string name, string country, string federation, BattleManager battleManager)
+        public BattleTeam(int id, string name, string country, string federation, TileMap map, IEnumerable<MapTileIndex> teamTiles, BattleManager battleManager)
         {
             this.Id = id;
             this.Name = name;
@@ -35,18 +35,15 @@ namespace WarOfLords.Common.Models
             this.Setting = new BattleSetting();
             this.SubTeamDics = new ConcurrentDictionary<int, IEnumerable<BattleUnit>>();
             this.BattleManager = battleManager;
+            this.BattleFieldMap = map;
+            this.positionTies = teamTiles;
         }
 
-        public MapVertex Position
+        public IEnumerable< MapTileIndex> InTiles
         {
             get
             {
-                return teamPosition;
-            }
-            set
-            {
-                this.teamPosition = value.Clone();
-                AutoDeployBattleUnits();
+                return this.AllAliveUnits.Select(_ => BattleFieldMap.GetTileIndex(_.Position.X, _.Position.Y)).Distinct();
             }
         }
 
@@ -60,7 +57,7 @@ namespace WarOfLords.Common.Models
 
         public bool ActiveAttack { get; set; }
 
-        public Map BattleFieldMap { get; set; }
+        public TileMap BattleFieldMap { get; set; }
 
         public BattleSetting Setting { get; set; }
 
@@ -183,7 +180,7 @@ namespace WarOfLords.Common.Models
             }
             this.BattleUnits.Add(unit);
             unit.Team = this;
-            unit.Position = this.Position;
+            unit.Position = this.BattleFieldMap.FindReachablePointInTiles(unit, this.positionTies);
             this.OnAddBattleUnitSucceeded?.Invoke(unit);
             this.MessageQueue.EnqueueMessage(this, "BattleUnit Jioned the team: {0}, {1}~{2}", t.Name, unit.Name, unit.Id);
         }
@@ -366,10 +363,10 @@ namespace WarOfLords.Common.Models
             }
         }
 
-        public void EnterMap(Map map)
+        public void EnterMap(TileMap map)
         {
             this.BattleFieldMap = map;
-            this.Position = map.StrongPoints.First();
+            //this.Position = map.StrongPoints.First();
         }
 
         public bool AllDead()
@@ -427,85 +424,85 @@ namespace WarOfLords.Common.Models
             this.BattleUnits.ToList().ForEach(_ => _.Selected = false);
         }
 
-        private void AutoDeployBattleUnits()
-        {
-            var units = this.AllAliveUnits;/*.ToList().ForEach(_ => _.Position = this.teamPosition.Clone());*/
-            MapVertex teamPos = this.teamPosition.Clone();
-            int leftY = teamPos.Y;
-            int leftX = teamPos.X;
-            int rightX = teamPos.X;
-            int rightY = teamPos.Y;
+        //private void AutoDeployBattleUnits()
+        //{
+        //    var units = this.AllAliveUnits;/*.ToList().ForEach(_ => _.Position = this.teamPosition.Clone());*/
+        //    MapVertex teamPos = this.teamPosition.Clone();
+        //    int leftY = teamPos.Y;
+        //    int leftX = teamPos.X;
+        //    int rightX = teamPos.X;
+        //    int rightY = teamPos.Y;
 
-            int leftXMax = teamPos.X - this.Setting.DefaultFormationWidth / 2;
-            int rightXMax = teamPos.X + (this.Setting.DefaultFormationWidth - this.Setting.DefaultFormationWidth / 2);
-            if (leftXMax < 0)
-            {
-                rightXMax -= leftXMax;
-                leftXMax = 0;
-            }
-            bool leftTurn = true;
-            foreach(var unit in units)
-            {
-                //bool reachable = false; 
-                if(leftTurn)
-                {
-                    MapVertex point = new MapVertex
-                    {
-                        X = leftX,
-                        Y = leftY,
-                        Z = 0
-                    };
+        //    int leftXMax = teamPos.X - this.Setting.DefaultFormationWidth / 2;
+        //    int rightXMax = teamPos.X + (this.Setting.DefaultFormationWidth - this.Setting.DefaultFormationWidth / 2);
+        //    if (leftXMax < 0)
+        //    {
+        //        rightXMax -= leftXMax;
+        //        leftXMax = 0;
+        //    }
+        //    bool leftTurn = true;
+        //    foreach(var unit in units)
+        //    {
+        //        //bool reachable = false; 
+        //        if(leftTurn)
+        //        {
+        //            MapVertex point = new MapVertex
+        //            {
+        //                X = leftX,
+        //                Y = leftY,
+        //                Z = 0
+        //            };
 
-                    while(!this.BattleFieldMap.PointReachable(point))
-                    {
-                        leftX--;
-                        if(leftX < leftXMax)
-                        {
-                            leftX = teamPos.X;
-                            leftY++;
-                        }
-                        point = new MapVertex
-                        {
-                            X = leftX,
-                            Y = leftY,
-                            Z = 0
-                        };
-                    }
+        //            while(!this.BattleFieldMap.PointReachable(point))
+        //            {
+        //                leftX--;
+        //                if(leftX < leftXMax)
+        //                {
+        //                    leftX = teamPos.X;
+        //                    leftY++;
+        //                }
+        //                point = new MapVertex
+        //                {
+        //                    X = leftX,
+        //                    Y = leftY,
+        //                    Z = 0
+        //                };
+        //            }
 
-                    this.BattleFieldMap.EnterPoint(point);
-                    unit.Position = point;
-                }
-                else
-                {
-                    MapVertex point = new MapVertex
-                    {
-                        X = rightX,
-                        Y = rightY,
-                        Z = 0
-                    };
+        //            this.BattleFieldMap.EnterPoint(point);
+        //            unit.Position = point;
+        //        }
+        //        else
+        //        {
+        //            MapVertex point = new MapVertex
+        //            {
+        //                X = rightX,
+        //                Y = rightY,
+        //                Z = 0
+        //            };
 
-                    while (!this.BattleFieldMap.PointReachable(point))
-                    {
-                        rightX ++;
-                        if (rightX > rightXMax)
-                        {
-                            rightX = teamPos.X;
-                            rightY++;
-                        }
-                        point = new MapVertex
-                        {
-                            X = rightX,
-                            Y = rightY,
-                            Z = 0
-                        };
-                    }
+        //            while (!this.BattleFieldMap.PointReachable(point))
+        //            {
+        //                rightX ++;
+        //                if (rightX > rightXMax)
+        //                {
+        //                    rightX = teamPos.X;
+        //                    rightY++;
+        //                }
+        //                point = new MapVertex
+        //                {
+        //                    X = rightX,
+        //                    Y = rightY,
+        //                    Z = 0
+        //                };
+        //            }
 
-                    this.BattleFieldMap.EnterPoint(point);
-                    unit.Position = point;
-                }
-                leftTurn = !leftTurn;
-            }
-        }
+        //            this.BattleFieldMap.EnterPoint(point);
+        //            unit.Position = point;
+        //        }
+        //        leftTurn = !leftTurn;
+        //    }
+        //}
 
         public int TotalHealth
         {

@@ -1,7 +1,9 @@
 ﻿
+using System;
+
 namespace WarOfLords.Common
 {
-    public class MapTileIndex
+    public class MapTileIndex: IComparable<MapTileIndex>
     {
         public int X;
         public int Y;
@@ -18,6 +20,11 @@ namespace WarOfLords.Common
             {
                 return ((long)X) << 32 | Y;
             }
+        }
+
+        public int CompareTo(MapTileIndex other)
+        {
+            return (int)(this.HashValue - other.HashValue);
         }
     }
 }
