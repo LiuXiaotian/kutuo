@@ -116,8 +116,8 @@ namespace WarOfLords.Client
             battleTeam1.OnAddBattleUnitSucceeded += this.OnAddBattleUnitToBattleTeamSucceeded;
             battleTeam2.OnAddBattleUnitSucceeded += this.OnAddBattleUnitToBattleTeamSucceeded;
 
-            ArmyMaker.MakeArmy(battleTeam1, battleInfo.Team1SwordNumber, battleInfo.Team1BowNumber, 2, 2, 1);
-            ArmyMaker.MakeArmy(battleTeam2, battleInfo.Team2SwordNumber, battleInfo.Team2BowNumber, 2, 2, 1);
+            ArmyMaker.MakeArmy(battleTeam1, battleInfo.Team1SwordNumber, battleInfo.Team1BowNumber, 5, 2, 1);
+            ArmyMaker.MakeArmy(battleTeam2, battleInfo.Team2SwordNumber, battleInfo.Team2BowNumber, 5, 2, 1);
             battleTeam1.Setting.MaxLockPerEnemy = 5;
             battleTeam2.Setting.MaxLockPerEnemy = 5;
 

@@ -77,8 +77,8 @@ namespace WarOfLords.Common.Models
             }
             set
             {
-                //lock(this.heathLock)
-                //{
+                lock(this.heathLock)
+                {
                     int change = value - health;
 
                     if (this.Team != null)
@@ -94,7 +94,7 @@ namespace WarOfLords.Common.Models
                         }
                     }
                     health = value;
-                //}
+                }
             }
         }
 
@@ -127,12 +127,25 @@ namespace WarOfLords.Common.Models
         public int TotalKilled { get; set; }
 
         public BattleTeam Team { get; set; }
+        public int TotalCuredHP { get; private set; }
 
         private object moveLock = new object();
         private object attackLock = new object();
         private object heathLock = new object();
         private CancellationTokenSource moveCancelTokenSource = null;
         private CancellationTokenSource attackCancelTokenSource = null;
+
+        private IEnumerable<BattleUnit> DiscoverTargetUnits(int range)
+        {
+            if (this is IMedicalCapability)
+            {
+                return this.Team.DiscoverUnhealthUnits(this.position, range);
+            }
+            else
+            {
+                return this.Team.DiscoverEnemies(this.Position,range);
+            }
+        }
 
         private async Task<int> MoveForAttack(MapVertex direction)
         {
@@ -159,12 +172,12 @@ namespace WarOfLords.Common.Models
 
                     int stepNeeded = distance / this.MoveStepLength;
                     if (stepNeeded == 0) stepNeeded = 1;
-                    IEnumerable<BattleUnit> enemies = this.Team.DiscoverEnemies(this.Position, this.AttackRange);
+                    IEnumerable<BattleUnit> targetUnits = DiscoverTargetUnits(this.AttackRange);
                     MapVertex fromPos = this.position.Clone();
                     TimeSpan duration = TimeSpan.FromMilliseconds(0);
                     TimeSpan moveInterval = TheLordTime.FromMilliseconds(this.MoveInterval);
                     TimeSpan actionInterval = TimeSpan.FromMilliseconds(500);
-                    while (stepNeeded > 0 && !cancelToken.IsCancellationRequested && enemies.Count() == 0)
+                    while (stepNeeded > 0 && !cancelToken.IsCancellationRequested && targetUnits.Count() == 0)
                     {
                         duration += moveInterval;
 
@@ -182,10 +195,10 @@ namespace WarOfLords.Common.Models
                         stepNeeded--;
                         if (movedTotal % 10 == 0) this.Team.MessageQueue.EnqueueMessage(this, "Moved to {0}", this.Position);
 
-                        enemies = this.Team.DiscoverEnemies(this.Position, this.AttackRange);
+                        targetUnits = DiscoverTargetUnits(this.AttackRange);
                     }
                     //this.OnPositionChanged?.Invoke(fromPos.Clone(), this.Position.Clone(), duration);
-                    if (enemies.Count() > 0)
+                    if (targetUnits.Count() > 0)
                     {
                         return movedTotal;
                     }
@@ -290,45 +303,54 @@ namespace WarOfLords.Common.Models
             this.Team.MessageQueue.EnqueueMessage(this, "Attacking target position: {0}", targetPos);
             while (!cancelToken.IsCancellationRequested  && this.Health > 0 && !this.Team.EnemyAllDead())
             {
-                //&& this.Position != targetPos
-                //if (this.Position.DistanceTo(targetPos) > this.AttackRange)
-                //{
                 await this.MoveForAttack(targetPos);
-                //}
 
-                IEnumerable<BattleUnit> enemies = this.Team.DiscoverEnemies(this.Position, this.SightRange).OrderBy(en=>this.position.DistanceTo(en.position));
+                IEnumerable<BattleUnit> targetUnits = DiscoverTargetUnits(this.SightRange)
+                    .OrderBy(en => this.position.DistanceTo(en.position));
 
-                while (this.Health > 0 && enemies.Count() > 0 && !cancelToken.IsCancellationRequested)
+                while (this.Health > 0 && targetUnits.Count() > 0 && !cancelToken.IsCancellationRequested)
                 {
                     BattleUnit target = null;
-                    foreach (var unit in enemies)
+                    if (this is IMedicalCapability)
                     {
-
-                        if (this.Team.LockEnemy(unit))
+                        target = targetUnits.FirstOrDefault();
+                        if (target != null)
                         {
-                            target = unit;
-                            break;
-                        } 
-                    }
-                    if (target != null)
-                    {
-                        await this.attack(target, cancelToken);
-                        this.Team.UnlockEnemy(target);
+                            await this.cure(target, cancelToken);
+                        }
                     }
                     else
                     {
-                        //select first
-                        target = enemies.FirstOrDefault();
-                        if(target != null)
+                        
+                        foreach (var unit in targetUnits)
+                        {
+
+                            if (this.Team.LockEnemy(unit))
+                            {
+                                target = unit;
+                                break;
+                            }
+                        }
+                        if (target != null)
                         {
                             await this.attack(target, cancelToken);
+                            this.Team.UnlockEnemy(target);
                         }
                         else
                         {
-                            break;
-                        }
+                            //select first
+                            target = targetUnits.FirstOrDefault();
+                            if (target != null)
+                            {
+                                await this.attack(target, cancelToken);
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        } 
                     }
-                    enemies = this.Team.DiscoverEnemies(this.Position, this.SightRange);
+                    targetUnits = DiscoverTargetUnits(this.SightRange);
                 }
                 await Task.Delay(TimeSpan.FromMilliseconds(100));
                 //if(!cancelToken.IsCancellationRequested && this.Health > 0)
@@ -429,6 +451,62 @@ namespace WarOfLords.Common.Models
                 {
                     this.Team.MessageQueue.EnqueueMessage(this, "Damaged {0} to {1}, range damage: {2}, My Pos: {3}, Enemy Pos: {4}", damage, target, rangeDamage, this.Position, target.Position);
                 }
+            }
+        }
+
+        private async Task cure(BattleUnit target, CancellationToken cancelToken)
+        {  
+            IMedicalCapability medicalUnit = this as IMedicalCapability;
+            if (medicalUnit == null) return;
+            this.Team.MessageQueue.EnqueueMessage(this, "Curing target : {0}", target);
+
+            while (this.health > 0 && target.Health > 0 && target.Health < target.MaxHealth  && !cancelToken.IsCancellationRequested)
+            {
+                if (this.Position.DistanceTo(target.Position) > this.AttackRange)
+                {
+                    await this.MoveForAttack(target.Position);
+                }
+                await Task.Delay(TheLordTime.FromMilliseconds(medicalUnit.RecoverInterval));
+                if (!cancelToken.IsCancellationRequested)
+                {
+                    if (!medicalUnit.IsRangeRecover)
+                    {
+                        cure(target);
+                    }
+                    else
+                    {
+                        cure(target);
+                        var targets = DiscoverTargetUnits(medicalUnit.RecoverRange);
+                        int cureTargets = medicalUnit.MaxRecoverTargets;
+                        foreach (var tgt in targets)
+                        {
+                            if (!tgt.Equals(target) && cureTargets > 0)
+                            {
+                                cure(tgt, rangeCure: true);
+                            }
+                            cureTargets--;
+                            if (cureTargets <= 0) break;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void cure(BattleUnit target, bool rangeCure = false)
+        {
+            IMedicalCapability medicalUnit = this as IMedicalCapability;
+            if (medicalUnit == null) return;
+
+            if (this.Health > 0 && target.Health > 0 && target.Health < target.MaxHealth)
+            {
+                if (this.Position.DistanceTo(target.Position) > this.AttackRange)
+                {
+                    this.Team.MessageQueue.EnqueueMessage(this, "Cure missed to {0}, out of attack range.", target);
+                    return;
+                }
+                int cureHP = Math.Min(medicalUnit.Recover, target.MaxHealth - target.Health);
+                target.Health += cureHP;
+                this.TotalCuredHP += cureHP;
             }
         }
 

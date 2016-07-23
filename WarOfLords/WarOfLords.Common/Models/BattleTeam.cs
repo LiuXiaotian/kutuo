@@ -318,6 +318,8 @@ namespace WarOfLords.Common.Models
             return this.DetectedEnemyUnits.Values.Where(_ => _.Health > 0 && _.Position.DistanceTo(center) <= radius); /*&& (!this.EnemyLockNumberDic.ContainsKey(_.Id) || this.EnemyLockNumberDic[_.Id] < this.Setting.MaxLockPerEnemy))*/
         }
 
+
+
         private IEnumerable<BattleUnit> DetectEnemies(/*MapVertex center, int radius*/)
         {
             List<BattleUnit> unitList = new List<BattleUnit>();
@@ -363,11 +365,7 @@ namespace WarOfLords.Common.Models
             }
         }
 
-        public void EnterMap(TileMap map)
-        {
-            this.BattleFieldMap = map;
-            //this.Position = map.StrongPoints.First();
-        }
+
 
         public bool AllDead()
         {
@@ -417,6 +415,11 @@ namespace WarOfLords.Common.Models
         public void UnlockEnemy(BattleUnit unit)
         {
             this.EnemyLockNumberDic.AddOrUpdate(unit.Id, 0, (key, oldValue) => { return oldValue - 1; });
+        }
+
+        public IEnumerable<BattleUnit> DiscoverUnhealthUnits(MapVertex center, int radius)
+        {
+            return this.AllAliveUnits.Where(_ => _.Health > 0 && _.Health < _.MaxHealth && _.Position.DistanceTo(center) <= radius);
         }
 
         private void unselectSelectedUnits()

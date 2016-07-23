@@ -61,6 +61,7 @@ namespace WarOfLords.Client
                 //AnchorPoint = CCPoint.Zero,
                 //Position = new CCPoint(0, 100)
             };
+            
 
             CCMenuItemLabel fightMenuItem = new CCMenuItemLabel(startLabel, (obj) =>
             { 

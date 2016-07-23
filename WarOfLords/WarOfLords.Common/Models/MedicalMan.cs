@@ -11,13 +11,14 @@ namespace WarOfLords.Common.Models
         public MedicalMan(int id, string name) : base(id, name)
         {
             this.CommandAbility = 10;
+            this.MoveInterval = 600;
+            this.MoveStepLength = 3;
+
             this.IsMultiRecoverTargets = false;
             this.IsRangeRecover = false;
             this.MaxRecoverTargets = 1;
-            this.MoveInterval = 600;
-            this.MoveStepLength = 3;
             this.Recover = 30;
-            this.RecoverInterval = 180000;
+            this.RecoverInterval = 1000;
             this.RecoverRange = 1;
             this.RecoverRatio = 100;
             this.SightRange = 50;

@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using WarOfLords.Common.Models;
 
@@ -12,6 +13,7 @@ namespace WarOfLords.Common
         public int TileWidth = 40;
         public int TileHeight = 40;
        
+        
 
         public TileMap(int row, int column, int tileWidth, int tileHeight)
         {
@@ -24,6 +26,25 @@ namespace WarOfLords.Common
         public Dictionary<long, MapTileIndex> ReachableTiles = new Dictionary<long, MapTileIndex>();
 
         public Dictionary<long, MapTileIndex> HubTiles = new Dictionary<long, MapTileIndex>();
+
+        Dictionary<TileNavigationKey, TileNavigationResult> hubNavCache = new Dictionary<TileNavigationKey, TileNavigationResult>();
+
+        class TileNavigationKey : IEquatable<TileNavigationKey>
+        {
+            public MapTileIndex FromTile;
+
+            public MapTileIndex ToTile;
+
+            public bool Equals(TileNavigationKey other)
+            {
+                return FromTile.HashValue == other.FromTile.HashValue && ToTile.HashValue == other.ToTile.HashValue;
+            }
+
+            public override int GetHashCode()
+            {
+                return FromTile.X;
+            }
+        }
 
         public void AddReachableTilesInRow(int fromColumn, int toColumn, int row)
         {
@@ -288,6 +309,17 @@ namespace WarOfLords.Common
 
         public TileNavigationResult SearchWayBetweenTwoHubTiles(MapTileIndex fromHubTile, MapTileIndex toHubTile, List<long> excludedTileHashs/*, TileNavigationResult previousWay*/)
         {
+            TileNavigationKey navKey = new TileNavigationKey
+            {
+                FromTile = fromHubTile,
+                ToTile = toHubTile,
+            };
+
+            if(this.hubNavCache.ContainsKey(navKey))
+            {
+                return this.hubNavCache[navKey];
+            }
+
             if (excludedTileHashs == null)
             {
                 excludedTileHashs = new List<long>();
@@ -297,12 +329,17 @@ namespace WarOfLords.Common
             var straightWay = TryGetStraightWay(fromHubTile, toHubTile);
             if (straightWay != null && straightWay.IsReachable)
             {
+                this.hubNavCache[navKey] = straightWay;
                 return straightWay;
             }
 
             var possiableWays = GetAllPossiableWaysToHubTile(fromHubTile, excludedTileHashs);
 
-            if (possiableWays.Count == 0) return null;
+            if (possiableWays.Count == 0)
+            {
+                this.hubNavCache[navKey] = null;
+                return null;
+            }
 
             int distance = int.MaxValue;
             TileNavigationResult shortestWay = null;
@@ -336,6 +373,7 @@ namespace WarOfLords.Common
                 }
             }
 
+            this.hubNavCache[navKey] = shortestWay;
             return shortestWay;
         }
 
