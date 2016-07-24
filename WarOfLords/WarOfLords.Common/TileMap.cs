@@ -27,6 +27,10 @@ namespace WarOfLords.Common
 
         public Dictionary<long, MapTileIndex> HubTiles = new Dictionary<long, MapTileIndex>();
 
+        public Dictionary<long, MapTileIndex> Camp1Tiles = new Dictionary<long, MapTileIndex>();
+
+        public Dictionary<long, MapTileIndex> Camp2Tiles = new Dictionary<long, MapTileIndex>();
+
         Dictionary<TileNavigationKey, TileNavigationResult> hubNavCache = new Dictionary<TileNavigationKey, TileNavigationResult>();
 
         class TileNavigationKey : IEquatable<TileNavigationKey>
@@ -106,6 +110,15 @@ namespace WarOfLords.Common
             return closestTile;
         }
 
+        internal void AddCamp1Tile(MapTileIndex mapTileIndex)
+        {
+
+            if(!this.Camp1Tiles.ContainsKey(mapTileIndex.HashValue))
+            {
+                this.Camp1Tiles.Add(mapTileIndex.HashValue, mapTileIndex);
+            }
+        }
+
         public TileNavigationResult AreReachableInRow(int fromColumn, int toColumn, int row)
         {
             //int minColumn = Math.Min(fromColumn, toColumn);
@@ -144,6 +157,11 @@ namespace WarOfLords.Common
             }
             navResult.IsReachable = true;
             return navResult;
+        }
+
+        internal void AddCamp2Tile(MapTileIndex mapTileIndex)
+        {
+            this.Camp2Tiles.Add(mapTileIndex.HashValue, mapTileIndex);
         }
 
         public TileNavigationResult AreReachableInColumn(int fromRow, int toRow, int column)

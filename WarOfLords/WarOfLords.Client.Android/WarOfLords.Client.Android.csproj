@@ -83,6 +83,9 @@
     <AndroidAsset Include="Assets\Content\levels\level0.tmx" />
     <AndroidAsset Include="Assets\Content\Maps\BattleTiledMap.tmx" />
     <AndroidAsset Include="Assets\Content\Maps\BattleTiledMapBg.tmx" />
+    <AndroidAsset Include="..\AssetEdit\Maps\ClassicMap.tmx">
+      <Link>Assets\Content\Maps\ClassicMap.tmx</Link>
+    </AndroidAsset>
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
@@ -172,6 +175,11 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\Content\Maps\BattleTiledMap.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="..\AssetEdit\Maps\TileSet.png">
+      <Link>Assets\Content\Maps\TileSet.png</Link>
+    </AndroidAsset>
   </ItemGroup>
   <Import Project="..\WarOfLords.Client\WarOfLords.Client.projitems" Label="Shared" />
   <Import Project="..\WarOfLords.Common\WarOfLords.Common.projitems" Label="Shared" />

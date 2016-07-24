@@ -10,5 +10,7 @@ namespace WarOfLords.Client
         public int Team2SwordNumber = 10;
         public int Team1BowNumber = 10;
         public int Team2BowNumber = 10;
+        public int Team1MedicalNumber = 5;
+        public int Team2MedicalNumber = 5;
     }
 }

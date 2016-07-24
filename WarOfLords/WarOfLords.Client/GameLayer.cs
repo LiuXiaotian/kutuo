@@ -21,10 +21,12 @@ namespace WarOfLords.Client
         BattleManager battleManager;
         CancellationTokenSource cancelSourceForMessageLoopUp = new CancellationTokenSource();
         BattleInfo battleInfo;
+        TileMap battleMap;
 
-        public GameLayer(BattleInfo info) : base(CCColor4B.White)
+        public GameLayer(BattleInfo info, TileMap map) : base(CCColor4B.White)
         {
             battleInfo = info;
+            battleMap = map;
             var touchListener = new CCEventListenerTouchAllAtOnce(); 
             touchListener.OnTouchesEnded += this.OnTouchesEnded;
             AddEventListener(touchListener, this);
@@ -46,15 +48,17 @@ namespace WarOfLords.Client
 
             CCSize size = VisibleBoundsWorldspace.Size;
 
-            team1Label = new CCLabel("Team1Label", "Arial", 18, CCLabelFormat.SystemFont);
-            team1Label.Color = new CCColor3B(CCColor4B.Red);
+            team1Label = new CCLabel("Team1Label", "Arial", 30, CCLabelFormat.SystemFont);
+            team1Label.Color = new CCColor3B(CCColor4B.Black);
+            //team1Label.Texture = new CCTexture2D("Content/40X40/Road.png");
             team1Label.PositionX = 0;
             team1Label.PositionY = 0;
             team1Label.AnchorPoint = new CCPoint(0, 0);
             AddChild(team1Label);
 
-            team2Label = new CCLabel("Team2Label", "Arial", 18, CCLabelFormat.SystemFont);
-            team2Label.Color = new CCColor3B(CCColor4B.Red);
+            team2Label = new CCLabel("Team2Label", "Arial", 30, CCLabelFormat.SystemFont);
+            team2Label.Color = new CCColor3B(CCColor4B.Black);
+            //team2Label.Texture = new CCTexture2D("Content/40X40/Road.png");
             team2Label.Position = this.VisibleBoundsWorldspace.LeftTop();
             //team2Label.PositionY = this.VisibleBoundsWorldspace.top;
             team2Label.AnchorPoint = new CCPoint(0, 1);
@@ -86,7 +90,7 @@ namespace WarOfLords.Client
             string federation2 = "F2";
 
             ArmyMaker armyMaker = new ArmyMaker();
-            TileMap map = TileMap.DefaultInstance();
+            //TileMap map = TileMap.DefaultInstance();
 
             battleManager = new BattleManager();
 
@@ -96,19 +100,22 @@ namespace WarOfLords.Client
             battleManager.CountryBattleTeamsMapDic.AddOrUpdate(country1, new List<BattleTeam>(), (key, oldValue) => oldValue);
             battleManager.CountryBattleTeamsMapDic.AddOrUpdate(country2, new List<BattleTeam>(), (key, oldValue) => oldValue);
 
-            List<MapTileIndex> team1Tiles = new List<MapTileIndex>();
-            team1Tiles.Add(new MapTileIndex(8, 4));
-            team1Tiles.Add(new MapTileIndex(9, 4));
-            team1Tiles.Add(new MapTileIndex(10, 4));
-            team1Tiles.Add(new MapTileIndex(11, 4));
-            List<MapTileIndex> team2Tiles = new List<MapTileIndex>();
-            team2Tiles.Add(new MapTileIndex(8, 21));
-            team2Tiles.Add(new MapTileIndex(9, 21));
-            team2Tiles.Add(new MapTileIndex(10, 21));
-            team2Tiles.Add(new MapTileIndex(11, 21));
+            //List<MapTileIndex> team1Tiles = new List<MapTileIndex>();
+            //team1Tiles.Add(new MapTileIndex(8, 4));
+            //team1Tiles.Add(new MapTileIndex(9, 4));
+            //team1Tiles.Add(new MapTileIndex(10, 4));
+            //team1Tiles.Add(new MapTileIndex(11, 4));
+            //List<MapTileIndex> team2Tiles = new List<MapTileIndex>();
+            //team2Tiles.Add(new MapTileIndex(8, 21));
+            //team2Tiles.Add(new MapTileIndex(9, 21));
+            //team2Tiles.Add(new MapTileIndex(10, 21));
+            //team2Tiles.Add(new MapTileIndex(11, 21));
+            IEnumerable<MapTileIndex> team1Tiles = battleMap.Camp1Tiles.Values;
+            IEnumerable<MapTileIndex> team2Tiles = battleMap.Camp2Tiles.Values;
 
-            battleTeam1 = new BattleTeam(ArmyMaker.NewId(), "C1.T1", country1, federation1, map, team1Tiles,  this.battleManager);
-            battleTeam2 = new BattleTeam(ArmyMaker.NewId(), "C2.T2", country2, federation2, map, team2Tiles, this.battleManager);
+
+            battleTeam1 = new BattleTeam(ArmyMaker.NewId(), "C1.T1", country1, federation1, battleMap, team1Tiles,  this.battleManager);
+            battleTeam2 = new BattleTeam(ArmyMaker.NewId(), "C2.T2", country2, federation2, battleMap, team2Tiles, this.battleManager);
 
             battleManager.CountryBattleTeamsMapDic[country1].Add(battleTeam1);
             battleManager.CountryBattleTeamsMapDic[country2].Add(battleTeam2);
@@ -116,8 +123,8 @@ namespace WarOfLords.Client
             battleTeam1.OnAddBattleUnitSucceeded += this.OnAddBattleUnitToBattleTeamSucceeded;
             battleTeam2.OnAddBattleUnitSucceeded += this.OnAddBattleUnitToBattleTeamSucceeded;
 
-            ArmyMaker.MakeArmy(battleTeam1, battleInfo.Team1SwordNumber, battleInfo.Team1BowNumber, 5, 2, 1);
-            ArmyMaker.MakeArmy(battleTeam2, battleInfo.Team2SwordNumber, battleInfo.Team2BowNumber, 5, 2, 1);
+            ArmyMaker.MakeArmy(battleTeam1, battleInfo.Team1SwordNumber, battleInfo.Team1BowNumber, battleInfo.Team1MedicalNumber, 2, 1);
+            ArmyMaker.MakeArmy(battleTeam2, battleInfo.Team2SwordNumber, battleInfo.Team2BowNumber, battleInfo.Team2MedicalNumber, 2, 1);
             battleTeam1.Setting.MaxLockPerEnemy = 5;
             battleTeam2.Setting.MaxLockPerEnemy = 5;
 

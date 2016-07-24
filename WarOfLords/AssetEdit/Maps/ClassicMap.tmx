@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="left-up" width="20" height="26" tilewidth="40" tileheight="40" nextobjectid="6">
+ <tileset firstgid="1" name="tiles" tilewidth="40" tileheight="40" tilecount="520" columns="20">
+  <image source="TileSet.png" trans="ff00ff" width="800" height="1040"/>
+  <tile id="0">
+   <properties>
+    <property name="Reachable" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="2">
+   <properties>
+    <property name="Reachable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="4">
+   <properties>
+    <property name="Reachable" type="bool" value="true"/>
+    <property name="Type" value="Hub"/>
+   </properties>
+  </tile>
+  <tile id="6">
+   <properties>
+    <property name="Reachable" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="8">
+   <properties>
+    <property name="Reachable" type="bool" value="true"/>
+    <property name="Type" value="Camp1"/>
+   </properties>
+  </tile>
+  <tile id="10">
+   <properties>
+    <property name="Reachable" type="bool" value="true"/>
+    <property name="Type" value="Camp2"/>
+   </properties>
+  </tile>
+  <tile id="42">
+   <properties>
+    <property name="Type" value="Tower"/>
+   </properties>
+  </tile>
+  <tile id="43">
+   <properties>
+    <property name="Type" value="Wall"/>
+   </properties>
+  </tile>
+  <tile id="62">
+   <properties>
+    <property name="Type" value="Wall"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="background" width="20" height="26">
+  <data encoding="base64" compression="zlib">
+   eJxjZGBgYBzFNMPcaJhYfaxAzIyGWXFgbOrQzQOJawOxDhRrkyiGzTx7IGaHYnsSxehhHjX9iyuciRVDNosTKkau+0B6ubGYR2740cs8avmX2vExmj9olz/ILa9wYU40PNDl+3DHANiCGT0=
+  </data>
+ </layer>
+</map>

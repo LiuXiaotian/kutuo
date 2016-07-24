@@ -52,17 +52,25 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Maps\BattleTiledMapBg.tmx" />
+    <None Include="Maps\ClassicMap.tmx" />
+    <None Include="Maps\TileSet.tmx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="200X200\bg.png" />
     <Content Include="200X200\Tower.png" />
     <Content Include="200X200\Wall_H.png" />
     <Content Include="200X200\Wall_V.png" />
+    <Content Include="40X40\bg.png" />
+    <Content Include="40X40\Camp.png" />
+    <Content Include="40X40\Hub.png" />
     <Content Include="40X40\Road.png" />
+    <Content Include="40X40\Squre.png" />
     <Content Include="40X40\Tower.png" />
     <Content Include="40X40\WallH.png" />
     <Content Include="40X40\WallV.png" />
     <Content Include="GateTower20X20.png" />
     <Content Include="Maps\BattleTiledMap.png" />
+    <Content Include="Maps\TileSet.png" />
     <Content Include="Wall20X20.png" />
     <Content Include="Wall200X200.png" />
     <Content Include="GateTower200X200.png" />

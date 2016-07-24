@@ -16,7 +16,7 @@ namespace WarOfLords.Common.Models
         private Dictionary<int, CancellationTokenSource> moveCancelTokenSourceList;
         private ConcurrentDictionary<int, BattleUnit> DetectedEnemyUnits;
         private IEnumerable<MapTileIndex> positionTies;
-        private ConcurrentDictionary<int, IEnumerable<BattleUnit>> SubTeamDics;
+        private ConcurrentDictionary<string, IEnumerable<BattleUnit>> SubTeamDics;
         private BattleManager BattleManager;
 
         public BattleTeam(int id, string name, string country, string federation, TileMap map, IEnumerable<MapTileIndex> teamTiles, BattleManager battleManager)
@@ -33,7 +33,7 @@ namespace WarOfLords.Common.Models
             this.DetectedEnemyUnits = new ConcurrentDictionary<int, BattleUnit>();
             EnemyLockNumberDic = new ConcurrentDictionary<int, int>();
             this.Setting = new BattleSetting();
-            this.SubTeamDics = new ConcurrentDictionary<int, IEnumerable<BattleUnit>>();
+            this.SubTeamDics = new ConcurrentDictionary<string, IEnumerable<BattleUnit>>();
             this.BattleManager = battleManager;
             this.BattleFieldMap = map;
             this.positionTies = teamTiles;
@@ -131,7 +131,8 @@ namespace WarOfLords.Common.Models
             }
         }
 
-        public void CreateSubTeam(int subTeamId, 
+        public void CreateSubTeam(
+            string subTeamId,
             int swordManCount,
             int bowManCount,
             int medicalManCount,
@@ -139,22 +140,25 @@ namespace WarOfLords.Common.Models
             int scoutCount)
         {
             List<BattleUnit> unitList = new List<BattleUnit>();
-            unitList.AddRange( this.SwordManList.Where(u => u.Health > 0).Take(swordManCount));
-            unitList.AddRange(this.BowManList.Where(u => u.Health > 0).Take(bowManCount));
-            unitList.AddRange(this.MedicalManList.Where(u => u.Health > 0).Take(medicalManCount));
-            unitList.AddRange(this.TrebuchetList.Where(u => u.Health > 0).Take(trebuchetCount));
-            unitList.AddRange(this.ScoutList.Where(u => u.Health > 0).Take(scoutCount));
+            unitList.AddRange(this.SwordManList.Where(u => u.Health > 0 && u.SubTeamId == null).Take(swordManCount));
+            unitList.AddRange(this.BowManList.Where(u => u.Health > 0 && u.SubTeamId == null).Take(bowManCount));
+            unitList.AddRange(this.MedicalManList.Where(u => u.Health > 0 && u.SubTeamId == null).Take(medicalManCount));
+            unitList.AddRange(this.TrebuchetList.Where(u => u.Health > 0 && u.SubTeamId == null).Take(trebuchetCount));
+            unitList.AddRange(this.ScoutList.Where(u => u.Health > 0 && u.SubTeamId == null).Take(scoutCount));
 
-            this.SubTeamDics.AddOrUpdate(subTeamId, unitList, (key, oldValue)=> { return unitList;});
+            unitList.ForEach(_ => _.SubTeamId = subTeamId);
+
+            //this.SubTeamDics.AddOrUpdate(subTeamId, unitList, (key, oldValue) => { return unitList; });
         }
 
-        public void CreateSubTeam<T>(int subTeamId) where T : BattleUnit
+        public void CreateSubTeam<T>(string subTeamId) where T : BattleUnit
         {
             var unitList = this.BattleUnits.Where(u => u.Health > 0 && (u as T) != null);
-            this.SubTeamDics.AddOrUpdate(subTeamId, unitList, (key, oldValue) => { return unitList; });
+            unitList.ToList().ForEach(_ => _.SubTeamId = subTeamId);
+            //this.SubTeamDics.AddOrUpdate(subTeamId, unitList, (key, oldValue) => { return unitList; });
         }
 
-        public void SelectSubTeam(int subTeamId)
+        public void SelectSubTeam(string subTeamId)
         {
             lock (this.selectedUnitsLock)
             {
@@ -162,8 +166,16 @@ namespace WarOfLords.Common.Models
                 IEnumerable<BattleUnit> selectList;
                 if (this.SubTeamDics.TryGetValue(subTeamId, out selectList))
                 {
-                    selectList.ToList().ForEach(u => u.Selected = true);
+                    selectList.Where(_=>_.SubTeamId == subTeamId).ToList().ForEach(u => u.Selected = true);
                 }
+            }
+        }
+
+        public IEnumerable<string> CurrentSubTeams
+        {
+            get
+            {
+                return this.AllAliveUnits.Select(_ => _.SubTeamId).Distinct();
             }
         }
 

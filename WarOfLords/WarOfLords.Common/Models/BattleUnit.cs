@@ -129,6 +129,8 @@ namespace WarOfLords.Common.Models
         public BattleTeam Team { get; set; }
         public int TotalCuredHP { get; private set; }
 
+        public string SubTeamId { get; set; }
+
         private object moveLock = new object();
         private object attackLock = new object();
         private object heathLock = new object();

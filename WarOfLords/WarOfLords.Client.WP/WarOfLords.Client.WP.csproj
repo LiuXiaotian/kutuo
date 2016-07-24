@@ -108,6 +108,9 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\AssetEdit\Maps\TileSet.png">
+      <Link>Content\Maps\TileSet.png</Link>
+    </Content>
     <Content Include="Assets\1200X1200.png" />
     <Content Include="Assets\200X200.png" />
     <Content Include="Content\Images\background.png" />
@@ -193,6 +196,9 @@
     <Content Include="Content\Maps\BattleTiledMap.png" />
     <Content Include="Content\Maps\BattleTiledMap.tmx" />
     <Content Include="Content\Maps\BattleTiledMapBg.tmx" />
+    <Content Include="..\AssetEdit\Maps\ClassicMap.tmx">
+      <Link>Content\Maps\ClassicMap.tmx</Link>
+    </Content>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

@@ -12,10 +12,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)AppDelegate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BattleInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BattleResult.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BattleScene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BattleUnitSprite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ClientApplicationDelegate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GameLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GameOverLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GameStartLayer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PropertyLocation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TileMapPropertyFinder.cs" />
   </ItemGroup>
 </Project>
